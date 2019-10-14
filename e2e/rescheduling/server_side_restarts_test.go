@@ -92,7 +92,7 @@ var _ = Describe("Server Side Restart Tests", func() {
 		system.GarbageCollect()
 	})
 
-	Describe("Reschedule Stanza Tests", func() {
+	Describe("Reschedule Block Tests", func() {
 
 		Context("No reschedule attempts", func() {
 			BeforeEach(func() {
@@ -159,7 +159,7 @@ var _ = Describe("Server Side Restart Tests", func() {
 			})
 		})
 
-		Context("Reschedule with update stanza", func() {
+		Context("Reschedule with update block", func() {
 			BeforeEach(func() {
 				specFile = "input/rescheduling_update.hcl"
 			})

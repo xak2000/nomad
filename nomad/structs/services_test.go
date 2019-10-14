@@ -13,7 +13,7 @@ func TestConsulConnect_Validate(t *testing.T) {
 
 	c := &ConsulConnect{}
 
-	// An empty Connect stanza is invalid
+	// An empty Connect block is invalid
 	require.Error(t, c.Validate())
 
 	// Native=true is valid

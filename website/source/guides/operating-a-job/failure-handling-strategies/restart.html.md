@@ -1,6 +1,6 @@
 ---
 layout: "guides"
-page_title: "Restart Stanza - Operating a Job"
+page_title: "Restart Block - Operating a Job"
 sidebar_current: "guides-operating-a-job-failure-handling-strategies-local-restarts"
 description: |-
   Nomad can restart a task on the node it is running on to recover from
@@ -8,15 +8,15 @@ description: |-
   a specific interval.
 ---
 
-# Restart Stanza
+# Restart Block
 
 To enable restarting a failed task on the node it is running on, the task group can be annotated
-with configurable options using the [`restart` stanza][restart]. Nomad will restart the failed task
+with configurable options using the [`restart` block][restart]. Nomad will restart the failed task
 up to `attempts` times within a provided `interval`. Operators can also choose whether to
 keep attempting restarts on the same node, or to fail the task so that it can be rescheduled
 on another node, via the `mode` parameter.
 
-We recommend setting mode to `fail` in the restart stanza to allow rescheduling the task on another node.
+We recommend setting mode to `fail` in the restart block to allow rescheduling the task on another node.
 
 
 ## Example
@@ -92,5 +92,5 @@ Time                       Type            Description
 ```
 
 
-[restart]: /docs/job-specification/restart.html "Nomad restart Stanza"
-[rescheduling]: /docs/job-specification/reschedule.html "Nomad restart Stanza"
+[restart]: /docs/job-specification/restart.html "Nomad restart Block"
+[rescheduling]: /docs/job-specification/reschedule.html "Nomad restart Block"

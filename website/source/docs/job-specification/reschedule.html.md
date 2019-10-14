@@ -1,15 +1,15 @@
 ---
 layout: "docs"
-page_title: "reschedule Stanza - Job Specification"
+page_title: "reschedule Block - Job Specification"
 sidebar_current: "docs-job-specification-reschedule"
 description: |-
-  The "reschedule" stanza specifies the group's rescheduling strategy upon
+  The "reschedule" block specifies the group's rescheduling strategy upon
   allocation failures. Nomad will only attempt to reschedule failed allocations on
   to another node only after any local [restarts](docs/job-specification/restart.html)
   have been exceeded.
 ---
 
-# `reschedule` Stanza
+# `reschedule` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -22,10 +22,10 @@ description: |-
   </tr>
 </table>
 
-The `reschedule` stanza specifies the group's rescheduling strategy. If specified at the job
+The `reschedule` block specifies the group's rescheduling strategy. If specified at the job
 level, the configuration will apply to all groups within the job. If the
-reschedule stanza is present on both the job and the group, they are merged with
-the group stanza taking the highest precedence and then the job.
+reschedule block is present on both the job and the group, they are merged with
+the group block taking the highest precedence and then the job.
 
 Nomad will attempt to schedule the task on another node if any of its allocation
 statuses become "failed". It prefers to create a replacement allocation on a node
@@ -46,7 +46,7 @@ job "docs" {
 }
 ```
 
-~> The reschedule stanza does not apply to `system` jobs because they run on
+~> The reschedule block does not apply to `system` jobs because they run on
    every node.
 
 ## `reschedule` Parameters
@@ -112,8 +112,8 @@ defaults by job type:
 
 ### Rescheduling during deployments
 
-The [update stanza](/docs/job-specification/update.html) controls rolling updates and canary deployments. A task
-group's reschedule stanza does not take affect during a deployment. For example, if a new version of the job
+The [update block](/docs/job-specification/update.html) controls rolling updates and canary deployments. A task
+group's reschedule block does not take affect during a deployment. For example, if a new version of the job
 is rolled out and the deployment failed due to a failing allocation, Nomad will not reschedule it.
 
 ### Disabling rescheduling ###

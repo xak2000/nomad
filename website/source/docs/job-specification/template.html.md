@@ -1,6 +1,6 @@
 ---
 layout: "docs"
-page_title: "template Stanza - Job Specification"
+page_title: "template Block - Job Specification"
 sidebar_current: "docs-job-specification-template"
 description: |-
   The "template" block instantiates an instance of a template renderer. This
@@ -9,7 +9,7 @@ description: |-
   configurations within a Nomad task.
 ---
 
-# `template` Stanza
+# `template` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -110,8 +110,8 @@ README][ct]. Since Nomad v0.6.0, templates can be read as environment variables.
 
 ## `template` Examples
 
-The following examples only show the `template` stanzas. Remember that the
-`template` stanza is only valid in the placements listed above.
+The following examples only show the `template` blocks. Remember that the
+`template` block is only valid in the placements listed above.
 
 ### Inline Template
 
@@ -143,7 +143,7 @@ template {
 
 ### Remote Template
 
-This example uses an [`artifact`][artifact] stanza to download an input template
+This example uses an [`artifact`][artifact] block to download an input template
 before passing it to the template engine:
 
 ```hcl
@@ -182,7 +182,7 @@ Env templates work exactly like other templates except once the templates are
 written, they are parsed as `KEY=value` pairs. Those key value pairs are
 included in the task's environment.
 
-For example the following template stanza:
+For example the following template block:
 
 ```hcl
 template {

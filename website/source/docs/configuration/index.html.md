@@ -82,7 +82,7 @@ testing.
 - `acl` <code>([ACL][acl]: nil)</code> - Specifies configuration which is specific to ACLs.
 
 - `addresses` `(Addresses: see below)` - Specifies the bind address for
-  individual network services. Any values configured in this stanza take
+  individual network services. Any values configured in this block take
   precedence over the default [bind_addr](#bind_addr).
   The values support [go-sockaddr/template format][go-sockaddr/template].
 
@@ -101,7 +101,7 @@ testing.
   to the peers of a server or a client node to support more complex network
   configurations such as NAT. This configuration is optional, and defaults to
   the bind address of the specific network service if it is not provided. Any
-  values configured in this stanza take precedence over the default
+  values configured in this block take precedence over the default
   [bind_addr](#bind_addr).
 
     If the bind address is `0.0.0.0` then the address
@@ -189,8 +189,8 @@ testing.
   This must be an absolute path.
 
 - `plugin` <code>([Plugin][plugin]: nil)</code> - Specifies configuration for a
-  specific plugin. The plugin stanza may be repeated, once for each plugin being
-  configured. The key of the stanza is the plugin's executable name relative to
+  specific plugin. The plugin block may be repeated, once for each plugin being
+  configured. The key of the block is the plugin's executable name relative to
   the [plugin_dir](#plugin_dir).
 
 - `ports` `(Port: see below)` - Specifies the network ports used for different

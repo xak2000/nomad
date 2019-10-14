@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "upstreams Stanza - Job Specification"
+page_title: "upstreams Block - Job Specification"
 sidebar_current: "docs-job-specification-upstreams"
 description: |-
-  The "upstreams" stanza allows specifying options for configuring
+  The "upstreams" block allows specifying options for configuring
   upstream services
 ---
 
-# `upstreams` Stanza
+# `upstreams` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -18,10 +18,10 @@ description: |-
   </tr>
 </table>
 
-The `upstreams` stanza allows configuring various options for managing upstream
+The `upstreams` block allows configuring various options for managing upstream
 services that a [Consul
 Connect](/guides/integrations/consul-connect/index.html) proxy routes to.  It
-is valid only within the context of a `proxy` stanza.
+is valid only within the context of a `proxy` block.
 
 For Consul-specific details see the [Consul Connect
 Guide](https://learn.hashicorp.com/consul/getting-started/connect#register-a-dependent-service-and-proxy).

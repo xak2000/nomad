@@ -25,7 +25,7 @@ desirable.
 
 Service jobs are intended to run until explicitly stopped by an operator. If a
 service task exits it is considered a failure and handled according to the job's
-[restart] and [reschedule] stanzas.
+[restart] and [reschedule] blocks.
 
 ## Batch
 
@@ -39,7 +39,7 @@ that are ranked.
 
 Batch jobs are intended to run until they exit successfully. Batch tasks that
 exit with an error are handled according to the job's [restart] and [reschedule]
-stanzas.
+blocks.
 
 ## System
 
@@ -60,7 +60,7 @@ See [preemption] for details on how tasks that get preempted are chosen.
 
 Systems jobs are intended to run until explicitly stopped either by an operator
 or [preemption]. If a system task exits it is considered a failure and handled
-according to the job's [restart] stanza; system jobs do not have rescheduling.
+according to the job's [restart] block; system jobs do not have rescheduling.
 
 [Borg]: https://research.google.com/pubs/pub43438.html
 [Sparrow]: https://cs.stanford.edu/~matei/papers/2013/sosp_sparrow.pdf

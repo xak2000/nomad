@@ -3,18 +3,18 @@ layout: "guides"
 page_title: "Spread"
 sidebar_current: "guides-operating-a-job-spread"
 description: |-
-  The following guide walks the user through using the spread stanza in Nomad.
+  The following guide walks the user through using the spread block in Nomad.
 ---
 
 # Increasing Failure Tolerance with Spread
 
 The Nomad scheduler uses a bin packing algorithm when making job placements on nodes to optimize resource utilization and density of applications. Although bin packing ensures optimal resource utilization, it can lead to some nodes carrying a majority of allocations for a given job. This can cause cascading failures where the failure of a single node or a single data center can lead to application unavailability.
 
-The [spread stanza][spread-stanza] solves this problem by allowing operators to distribute their workloads in a customized way based on [attributes][attributes] and/or [client metadata][client-metadata]. By using spread criteria in their job specification, Nomad job operators can ensure that failures across a domain such as datacenter or rack don't affect application availability.
+The [spread block][spread-block] solves this problem by allowing operators to distribute their workloads in a customized way based on [attributes][attributes] and/or [client metadata][client-metadata]. By using spread criteria in their job specification, Nomad job operators can ensure that failures across a domain such as datacenter or rack don't affect application availability.
 
 ## Reference Material
 
-- The [spread][spread-stanza] stanza documentation
+- The [spread][spread-block] block documentation
 - [Scheduling][scheduling] with Nomad
 
 ## Estimated Time to Complete
@@ -27,7 +27,7 @@ Consider a Nomad application that needs to be deployed to multiple datacenters w
 
 ## Solution
 
-Use the `spread` stanza in the Nomad [job specification][job-specification] to ensure the 70% of the workload is being placed in datacenter `dc1` and 30% is being placed in `dc2`. The Nomad operator can use the [percent][percent] option with a [target][target] to customize the spread.
+Use the `spread` block in the Nomad [job specification][job-specification] to ensure the 70% of the workload is being placed in datacenter `dc1` and 30% is being placed in `dc2`. The Nomad operator can use the [percent][percent] option with a [target][target] to customize the spread.
 
 ## Prerequisites
 
@@ -72,7 +72,7 @@ ID        DC   Name              Class   Drain  Eligibility  Status
 12894b80  dc1  ip-172-31-62-90   <none>  false  eligible     ready
 ```
 
-### Step 2: Create a Job with the `spread` Stanza
+### Step 2: Create a Job with the `spread` Block
 
 Create a file with the name `redis.nomad` and place the following content in it:
 
@@ -125,7 +125,7 @@ job "redis" {
  }
 }
 ```
-Note that we used the `spread` stanza and specified the [datacenter][attributes]
+Note that we used the `spread` block and specified the [datacenter][attributes]
 attribute while targeting `dc1` and `dc2` with the percent options. This will tell the Nomad scheduler to make an attempt to distribute 70% of the workload on `dc1` and 30% of the workload on `dc2`.
 
 ### Step 3: Register the Job `redis.nomad`
@@ -149,9 +149,9 @@ $ nomad run redis.nomad
     Evaluation status changed: "pending" -> "complete"
 ```
 
-Note that three of the ten allocations have been placed on node `5d16d949`. This is the node we configured to be in datacenter `dc2`. The Nomad scheduler has distributed 30% of the workload to `dc2` as we specified in the `spread` stanza.
+Note that three of the ten allocations have been placed on node `5d16d949`. This is the node we configured to be in datacenter `dc2`. The Nomad scheduler has distributed 30% of the workload to `dc2` as we specified in the `spread` block.
 
-Keep in mind that the Nomad scheduler still factors in other components into the overall scoring of nodes when making placements, so you should not expect the spread stanza to strictly implement your distribution preferences like a [constraint][constraint-stanza]. We will take a detailed look at the scoring in the next few steps.
+Keep in mind that the Nomad scheduler still factors in other components into the overall scoring of nodes when making placements, so you should not expect the spread block to strictly implement your distribution preferences like a [constraint][constraint-block]. We will take a detailed look at the scoring in the next few steps.
 
 ### Step 4: Check the Status of the `redis` Job
 
@@ -188,7 +188,7 @@ You can cross-check this output with the results of the `nomad node status` comm
 ### Step 5: Obtain Detailed Scoring Information on Job Placement
 
 The Nomad scheduler will not always spread your
-workload in the way you have specified in the `spread` stanza even if the
+workload in the way you have specified in the `spread` block even if the
 resources are available. This is because spread scoring is factored in with
 other metrics as well before making a scheduling decision. In this step, we will take a look at some of those other factors.
 
@@ -214,16 +214,16 @@ Note that the results from the `allocation-spread`, `binpack`, `job-anti-affinit
 
 ## Next Steps
 
-Change the values of the `percent` options on your targets in the `spread` stanza and observe how the placement behavior along with the final score given to each node changes (use the `nomad alloc status` command as shown in the previous step).
+Change the values of the `percent` options on your targets in the `spread` block and observe how the placement behavior along with the final score given to each node changes (use the `nomad alloc status` command as shown in the previous step).
 
 [alloc status]: /docs/commands/alloc/status.html
 [attributes]: /docs/runtime/interpolation.html#node-variables-
 [client-metadata]: /docs/configuration/client.html#meta
-[constraint-stanza]: /docs/job-specification/constraint.html
+[constraint-block]: /docs/job-specification/constraint.html
 [job-specification]: /docs/job-specification/index.html
 [node-status]: /docs/commands/node/status.html
 [percent]: /docs/job-specification/spread.html#percent
-[spread-stanza]: /docs/job-specification/spread.html
+[spread-block]: /docs/job-specification/spread.html
 [scheduling]: /docs/internals/scheduling/scheduling.html
 [target]: /docs/job-specification/spread.html#target
 [verbose]: /docs/commands/alloc/status.html#verbose

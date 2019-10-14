@@ -166,7 +166,7 @@ The API service is defined as a task group with a bridge network:
 ```
 
 Since the API service is only accessible via Consul Connect, it does not define
-any ports in its network. The service stanza enables Connect:
+any ports in its network. The service block enables Connect:
 
 ```hcl
    group "api" {
@@ -185,7 +185,7 @@ any ports in its network. The service stanza enables Connect:
    }
 ```
 
-The `port` in the service stanza is the port the API service listens on. The
+The `port` in the service block is the port the API service listens on. The
 Envoy proxy will automatically route traffic to that port inside the network
 namespace.
 
@@ -237,7 +237,7 @@ The web frontend connects to the API service via Consul Connect:
      }
 ```
 
-The `upstreams` stanza defines the remote service to access (`count-api`) and
+The `upstreams` block defines the remote service to access (`count-api`) and
 what port to expose that service on inside the network namespace (`8080`).
 
 The web frontend is configured to communicate with the API service with an

@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "client Stanza - Agent Configuration"
+page_title: "client Block - Agent Configuration"
 sidebar_current: "docs-configuration-client"
 description: |-
-  The "client" stanza configures the Nomad agent to accept jobs as assigned by
+  The "client" block configures the Nomad agent to accept jobs as assigned by
   the Nomad server, join the cluster, and specify driver-specific configuration.
 ---
 
-# `client` Stanza
+# `client` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -18,7 +18,7 @@ description: |-
   </tr>
 </table>
 
-The `client` stanza configures the Nomad agent to accept jobs as assigned by
+The `client` block configures the Nomad agent to accept jobs as assigned by
 the Nomad server, join the cluster, and specify driver-specific configuration.
 
 ```hcl
@@ -31,10 +31,10 @@ client {
 ## Plugin Options
 
 Nomad 0.9 now supports pluggable drivers. Operators should use the new
-[plugin][plugin-stanza] syntax to modify driver configuration. To find the
+[plugin][plugin-block] syntax to modify driver configuration. To find the
 plugin options supported by each individual Nomad driver, please see the
 [drivers documentation](/docs/drivers/index.html). The pre-0.9 `client.options`
-stanza will be supported in 0.9 for backward compatibility (except for the `lxc`
+block will be supported in 0.9 for backward compatibility (except for the `lxc`
 driver) but will be removed in a future release.
 
 ## `client` Parameters
@@ -152,9 +152,9 @@ driver) but will be removed in a future release.
   which the client will use to allocate IP addresses from.
 
 - `template` <code>([Template](#template-parameters): nil)</code> - Specifies
-  controls on the behavior of task [`template`](/docs/job-specification/template.html) stanzas.
+  controls on the behavior of task [`template`](/docs/job-specification/template.html) blocks.
 
-- `host_volume` <code>([host_volume](#host_volume-stanza): nil)</code> - Exposes
+- `host_volume` <code>([host_volume](#host_volume-block): nil)</code> - Exposes
   paths from the host as volumes that can be mounted into jobs.
 
 
@@ -193,7 +193,7 @@ the full list.
 ### `options` Parameters
 
 ~> Note: client configuration options for drivers will soon be deprecated. See
-the [plugin stanza][plugin-stanza] documentation for more information.
+the [plugin block][plugin-block] documentation for more information.
 
 The following is not an exhaustive list of options for only the Nomad
 client. To find the options supported by each individual Nomad driver, please
@@ -352,11 +352,11 @@ see the [drivers documentation](/docs/drivers/index.html).
   files on the client host via the `file` function. By default templates can
   access files only within the task directory.
 
-### `host_volume` Stanza
+### `host_volume` Block
 
-The `host_volume` stanza is used to make volumes available to jobs.
+The `host_volume` block is used to make volumes available to jobs.
 
-The key of the stanza corresponds to the name of the volume for use in the 
+The key of the block corresponds to the name of the volume for use in the 
 `source` parameter of a `"host"` type [`volume`](/docs/job-specification/volume.html)
 and ACLs.
 
@@ -432,5 +432,5 @@ client {
 }
 ```
 [plugin-options]: #plugin-options
-[plugin-stanza]: /docs/configuration/plugin.html
+[plugin-block]: /docs/configuration/plugin.html
 [server-join]: /docs/configuration/server_join.html "Server Join"

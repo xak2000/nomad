@@ -59,7 +59,7 @@ job "docs" {
 }
 ```
 
-We see that it has an `update` stanza that has the `canary` equal to the desired
+We see that it has an `update` block that has the `canary` equal to the desired
 count. This is what allows us to easily model blue/green deployments. When we
 change the job to run the "api-server:1.4" image, Nomad will create 5 new
 allocations without touching the original "api-server:1.3" allocations. Below we
@@ -284,7 +284,7 @@ c4c16494  example  0            successful  Deployment completed successfully
 ## Canary Deployments
 
 Canary updates are a useful way to test a new version of a job before beginning
-a rolling upgrade. The `update` stanza supports setting the number of canaries
+a rolling upgrade. The `update` block supports setting the number of canaries
 the job operator would like Nomad to create when the job changes via the
 `canary` parameter. When the job specification is updated, Nomad creates the
 canaries without stopping any allocations from the previous job.
@@ -320,7 +320,7 @@ job "docs" {
 }
 ```
 
-In the example above, the `update` stanza tells Nomad to create a single canary
+In the example above, the `update` block tells Nomad to create a single canary
 when the job specification is changed. Below we can see how this works by
 changing the image to run the new version:
 

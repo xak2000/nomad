@@ -211,7 +211,7 @@ The `Job` object supports the following keys:
 - `Update` - Specifies an update strategy to be applied to all task groups
   within the job. When specified both at the job level and the task group level,
   the update blocks are merged with the task group's taking precedence. For more
-  details on the update stanza, please see below.
+  details on the update block, please see below.
 
 -   `Periodic` - `Periodic` allows the job to be scheduled at fixed times, dates
     or intervals. The periodic expression is always evaluated in the UTC
@@ -309,7 +309,7 @@ attributes:
 - `Update` - Specifies an update strategy to be applied to all task groups
   within the job. When specified both at the job level and the task group level,
   the update blocks are merged with the task group's taking precedence. For more
-  details on the update stanza, please see below.
+  details on the update block, please see below.
 
 - `Tasks` - A list of `Task` object that are part of the task group.
 
@@ -455,7 +455,7 @@ The `Task` object supports the following keys:
 	 - `PortLabel`: Specifies the label of the port on which the check will
 	   be performed. Note this is the _label_ of the port and not the port
 	   number unless `AddressMode: "driver"`. The port label must match one
-	   defined in the Network stanza. If a port value was declared on the
+	   defined in the Network block. If a port value was declared on the
 	   `Service`, this will inherit from that value if not supplied. If
 	   supplied, this value takes precedence over the `Service.PortLabel`
 	   value. This is useful for services which operate on multiple ports.
@@ -647,9 +647,9 @@ The `RestartPolicy` object supports the following keys:
 ### Update
 
 Specifies the task group update strategy. When omitted, rolling updates are
-disabled. The update stanza can be specified at the job or task group level.
-When specified at the job, the update stanza is inherited by all task groups.
-When specified in both the job and in a task group, the stanzas are merged with
+disabled. The update block can be specified at the job or task group level.
+When specified at the job, the update block is inherited by all task groups.
+When specified in both the job and in a task group, the blocks are merged with
 the task group's taking precedence. The `Update` object supports the following
 attributes:
 

@@ -452,7 +452,7 @@ tls {
 ```
 
 Nomad's cert_file and key_file can be reloaded via SIGHUP simply by
-updating the TLS stanza to:
+updating the TLS block to:
 
 ```hcl
 tls {

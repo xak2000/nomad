@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "volume_mount Stanza - Job Specification"
+page_title: "volume_mount Block - Job Specification"
 sidebar_current: "docs-job-specification-volume_mount"
 description: |-
-   The "volume_mount" stanza allows the task to specify where a group "volume"
+   The "volume_mount" block allows the task to specify where a group "volume"
    should be mounted.
 ---
 
-# `volume_mount` Stanza
+# `volume_mount` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -18,7 +18,7 @@ description: |-
   </tr>
 </table>
 
-The `volume_mount` stanza allows the task to specify how a group
+The `volume_mount` block allows the task to specify how a group
 [`volume`][volume] should be mounted into the task.
 
 ```hcl

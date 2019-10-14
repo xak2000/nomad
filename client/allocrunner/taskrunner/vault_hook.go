@@ -45,7 +45,7 @@ func (tr *TaskRunner) updatedVaultToken(token string) {
 }
 
 type vaultHookConfig struct {
-	vaultStanza *structs.Vault
+	vaultBlock *structs.Vault
 	client      vaultclient.VaultClient
 	events      ti.EventEmitter
 	lifecycle   ti.TaskLifecycle
@@ -56,8 +56,8 @@ type vaultHookConfig struct {
 }
 
 type vaultHook struct {
-	// vaultStanza is the vault stanza for the task
-	vaultStanza *structs.Vault
+	// vaultBlock is the vault block for the task
+	vaultBlock *structs.Vault
 
 	// eventEmitter is used to emit events to the task
 	eventEmitter ti.EventEmitter
@@ -97,7 +97,7 @@ type vaultHook struct {
 func newVaultHook(config *vaultHookConfig) *vaultHook {
 	ctx, cancel := context.WithCancel(context.Background())
 	h := &vaultHook{
-		vaultStanza:  config.vaultStanza,
+		vaultBlock:  config.vaultBlock,
 		client:       config.client,
 		eventEmitter: config.events,
 		lifecycle:    config.lifecycle,
@@ -230,9 +230,9 @@ OUTER:
 		h.future.Set(token)
 
 		if updatedToken {
-			switch h.vaultStanza.ChangeMode {
+			switch h.vaultBlock.ChangeMode {
 			case structs.VaultChangeModeSignal:
-				s, err := signals.Parse(h.vaultStanza.ChangeSignal)
+				s, err := signals.Parse(h.vaultBlock.ChangeSignal)
 				if err != nil {
 					h.logger.Error("failed to parse signal", "error", err)
 					h.lifecycle.Kill(h.ctx,
@@ -243,7 +243,7 @@ OUTER:
 				}
 
 				event := structs.NewTaskEvent(structs.TaskSignaling).SetTaskSignal(s).SetDisplayMessage("Vault: new Vault token acquired")
-				if err := h.lifecycle.Signal(event, h.vaultStanza.ChangeSignal); err != nil {
+				if err := h.lifecycle.Signal(event, h.vaultBlock.ChangeSignal); err != nil {
 					h.logger.Error("failed to send signal", "error", err)
 					h.lifecycle.Kill(h.ctx,
 						structs.NewTaskEvent(structs.TaskKilling).
@@ -259,7 +259,7 @@ OUTER:
 			case structs.VaultChangeModeNoop:
 				fallthrough
 			default:
-				h.logger.Error("invalid Vault change mode", "mode", h.vaultStanza.ChangeMode)
+				h.logger.Error("invalid Vault change mode", "mode", h.vaultBlock.ChangeMode)
 			}
 
 			// We have handled it
@@ -278,7 +278,7 @@ OUTER:
 			stopRenewal()
 
 			// Check if we have to do anything
-			if h.vaultStanza.ChangeMode != structs.VaultChangeModeNoop {
+			if h.vaultBlock.ChangeMode != structs.VaultChangeModeNoop {
 				updatedToken = true
 			}
 		case <-h.ctx.Done():

@@ -624,7 +624,7 @@ For the best performance and security features you should use recent versions
 of the Linux Kernel and Docker daemon.
 
 If you would like to change any of the options related to the `docker` driver on
-a Nomad client, you can modify them with the [plugin stanza][plugin-stanza] syntax. Below is an example of a configuration (many of the values are the default). See the next section for more information on the options.
+a Nomad client, you can modify them with the [plugin block][plugin-block] syntax. Below is an example of a configuration (many of the values are the default). See the next section for more information on the options.
 
 ```hcl
 plugin "docker" {
@@ -684,7 +684,7 @@ plugin "docker" {
   and cap_drop options. Supports the value "ALL" as a shortcut for whitelisting
   all capabilities.
 
-* `auth` stanza:
+* `auth` block:
     * `config`<a id="plugin_auth_file"></a> - Allows an operator to specify a
       JSON file which is in the dockercfg format containing authentication
       information for a private registry, from either (in order) `auths`,
@@ -695,7 +695,7 @@ plugin "docker" {
       sources. The script's name must begin with `docker-credential-` and this
       option should include only the basename of the script, not the path.
 
-* `tls` stanza:
+* `tls` block:
     * `cert` - Path to the server's certificate file (`.pem`). Specify this
       along with `key` and `ca` to use a TLS client to connect to the docker
       daemon. `endpoint` must also be specified or this setting will be ignored.
@@ -706,7 +706,7 @@ plugin "docker" {
       `cert` and `key` to use a TLS client to connect to the docker daemon.
       `endpoint` must also be specified or this setting will be ignored.
 
-* `gc` stanza:
+* `gc` block:
     * `image` - Defaults to `true`. Changing this to `false` will prevent Nomad
       from removing images from stopped tasks.
     * `image_delay` - A time duration, as [defined
@@ -718,7 +718,7 @@ plugin "docker" {
       from removing a container when the task exits. Under a name conflict,
       Nomad may still remove the dead container.
 
-* `volumes` stanza:
+* `volumes` block:
     * `enabled` - Defaults to `true`. Allows tasks to bind host paths
       (`volumes`) inside their container and use volume drivers
       (`volume_driver`). Binding relative paths is always allowed and will be
@@ -735,7 +735,7 @@ plugin "docker" {
 ## Client Configuration
 
 ~> Note: client configuration options will soon be deprecated. Please use
-[plugin options][plugin-options] instead. See the [plugin stanza][plugin-stanza]
+[plugin options][plugin-options] instead. See the [plugin block][plugin-block]
 documentation for more information.
 
 The `docker` driver has the following [client configuration
@@ -900,4 +900,4 @@ Windows is relatively new and rapidly evolving you may want to consult the
 
 [WinIssues]: https://github.com/hashicorp/nomad/issues?q=is%3Aopen+is%3Aissue+label%3Adriver%2Fdocker+label%3Aplatform-windows
 [plugin-options]: #plugin-options
-[plugin-stanza]: /docs/configuration/plugin.html
+[plugin-block]: /docs/configuration/plugin.html

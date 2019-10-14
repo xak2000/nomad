@@ -2366,7 +2366,7 @@ func TestJobs_ApiJobToStructsJobUpdate(t *testing.T) {
 }
 
 // TestHTTP_JobValidate_SystemMigrate asserts that a system job with a migrate
-// stanza fails to validate but does not panic (see #5477).
+// block fails to validate but does not panic (see #5477).
 func TestHTTP_JobValidate_SystemMigrate(t *testing.T) {
 	t.Parallel()
 	httpTest(t, nil, func(s *TestAgent) {
@@ -2383,7 +2383,7 @@ func TestHTTP_JobValidate_SystemMigrate(t *testing.T) {
 			// System job...
 			Type: helper.StringToPtr("system"),
 
-			// ...with an empty migrate stanza
+			// ...with an empty migrate block
 			Migrate: &api.MigrateStrategy{},
 		}
 

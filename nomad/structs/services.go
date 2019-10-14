@@ -58,7 +58,7 @@ type ServiceCheck struct {
 	TaskName      string              // What task to execute this check in
 }
 
-// Copy the stanza recursively. Returns nil if nil.
+// Copy the block recursively. Returns nil if nil.
 func (sc *ServiceCheck) Copy() *ServiceCheck {
 	if sc == nil {
 		return nil
@@ -333,7 +333,7 @@ type Service struct {
 	Meta       map[string]string // Consul service meta
 }
 
-// Copy the stanza recursively. Returns nil if nil.
+// Copy the block recursively. Returns nil if nil.
 func (s *Service) Copy() *Service {
 	if s == nil {
 		return nil
@@ -533,7 +533,7 @@ OUTER:
 	return true
 }
 
-// ConsulConnect represents a Consul Connect jobspec stanza.
+// ConsulConnect represents a Consul Connect jobspec block.
 type ConsulConnect struct {
 	// Native is true if a service implements Connect directly and does not
 	// need a sidecar.
@@ -546,7 +546,7 @@ type ConsulConnect struct {
 	SidecarTask *SidecarTask
 }
 
-// Copy the stanza recursively. Returns nil if nil.
+// Copy the block recursively. Returns nil if nil.
 func (c *ConsulConnect) Copy() *ConsulConnect {
 	if c == nil {
 		return nil
@@ -577,7 +577,7 @@ func (c *ConsulConnect) HasSidecar() bool {
 	return c != nil && c.SidecarService != nil
 }
 
-// Validate that the Connect stanza has exactly one of Native or sidecar.
+// Validate that the Connect block has exactly one of Native or sidecar.
 func (c *ConsulConnect) Validate() error {
 	if c == nil {
 		return nil
@@ -595,13 +595,13 @@ func (c *ConsulConnect) Validate() error {
 }
 
 // ConsulSidecarService represents a Consul Connect SidecarService jobspec
-// stanza.
+// block.
 type ConsulSidecarService struct {
 	// Port is the service's port that the sidecar will connect to. May be
 	// a port label or a literal port number.
 	Port string
 
-	// Proxy stanza defining the sidecar proxy configuration.
+	// Proxy block defining the sidecar proxy configuration.
 	Proxy *ConsulProxy
 }
 
@@ -610,7 +610,7 @@ func (s *ConsulSidecarService) HasUpstreams() bool {
 	return s != nil && s.Proxy != nil && len(s.Proxy.Upstreams) > 0
 }
 
-// Copy the stanza recursively. Returns nil if nil.
+// Copy the block recursively. Returns nil if nil.
 func (s *ConsulSidecarService) Copy() *ConsulSidecarService {
 	return &ConsulSidecarService{
 		Port:  s.Port,
@@ -632,7 +632,7 @@ func (s *ConsulSidecarService) Equals(o *ConsulSidecarService) bool {
 }
 
 // SidecarTask represents a subset of Task fields that are able to be overridden
-// from the sidecar_task stanza
+// from the sidecar_task block
 type SidecarTask struct {
 	// Name of the task
 	Name string
@@ -773,7 +773,7 @@ func (t *SidecarTask) MergeIntoTask(task *Task) {
 	}
 }
 
-// ConsulProxy represents a Consul Connect sidecar proxy jobspec stanza.
+// ConsulProxy represents a Consul Connect sidecar proxy jobspec block.
 type ConsulProxy struct {
 
 	// LocalServiceAddress is the address the local service binds to.
@@ -795,7 +795,7 @@ type ConsulProxy struct {
 	Config map[string]interface{}
 }
 
-// Copy the stanza recursively. Returns nil if nil.
+// Copy the block recursively. Returns nil if nil.
 func (p *ConsulProxy) Copy() *ConsulProxy {
 	if p == nil {
 		return nil
@@ -864,7 +864,7 @@ OUTER:
 	return true
 }
 
-// ConsulUpstream represents a Consul Connect upstream jobspec stanza.
+// ConsulUpstream represents a Consul Connect upstream jobspec block.
 type ConsulUpstream struct {
 	// DestinationName is the name of the upstream service.
 	DestinationName string
@@ -874,7 +874,7 @@ type ConsulUpstream struct {
 	LocalBindPort int
 }
 
-// Copy the stanza recursively. Returns nil if nil.
+// Copy the block recursively. Returns nil if nil.
 func (u *ConsulUpstream) Copy() *ConsulUpstream {
 	if u == nil {
 		return nil

@@ -17,7 +17,7 @@ display data from a table to the user.
 ## Reference Material
 
 - [Vault Integration Documentation][vault-integration]
-- [Nomad Template Stanza Integration with Vault][nomad-template-vault]
+- [Nomad Template Block Integration with Vault][nomad-template-vault]
 - [Secrets Task Directory][secrets-task-directory]
 
 ## Estimated Time to Complete
@@ -256,16 +256,16 @@ policies             ["default" "nomad-server"]
 ```
 ### Step 7: Edit the Nomad Server Configuration to Enable Vault Integration
 
-At this point, you are ready to edit the [vault stanza][vault-stanza] in the
+At this point, you are ready to edit the [vault block][vault-block] in the
 Nomad Server's configuration file located at `/etc/nomad.d/nomad.hcl`. Provide
-the token you generated in the previous step in the `vault` stanza of your Nomad
+the token you generated in the previous step in the `vault` block of your Nomad
 server configuration. The token can also be provided as an environment variable
 called `VAULT_TOKEN`. Be sure to specify the `nomad-cluster-role` in the
 [create_from_role][create-from-role] option. If using
 [Vault Namespaces](https://www.vaultproject.io/docs/enterprise/namespaces/index.html),
 modify both the client and server configuration to include the namespace;
 alternatively, it can be provided in the environment variable `VAULT_NAMESPACE`.
-After following these steps and enabling Vault, the `vault` stanza in your Nomad
+After following these steps and enabling Vault, the `vault` block in your Nomad
 server configuration will be similar to what is shown below:
 
 ```hcl
@@ -289,7 +289,7 @@ NOTE: Nomad servers will renew the token automatically.
 
 Vault integration needs to be enabled on the client nodes as well, but this has
 been configured for you already in this environment. You will see the `vault`
-stanza in your Nomad clients' configuration (located at
+block in your Nomad clients' configuration (located at
 `/etc/nomad.d/nomad.hcl`) looks similar to the following:
 
 ```hcl
@@ -579,18 +579,18 @@ EOF
 There are a few key points to note here:
 
 - We have specified the `access-tables` policy in the [vault][vault-jobspec]
-  stanza of this job. The Nomad client will receive a token with this policy
+  block of this job. The Nomad client will receive a token with this policy
   attached. Recall from the previous step that this policy will allow our
   application to read from the `database/creds/accessdb` endpoint in Vault and
   retrieve credentials.
-- We are using the [template][template] stanza's [vault
+- We are using the [template][template] block's [vault
   integration][nomad-template-vault] to populate the JSON configuration file
   that our application needs. The underlying tool being used is [Consul
   Template][consul-template]. You can use Consul Template's documentation to
   learn more about the [syntax][consul-temp-syntax] needed to interact with
   Vault. Please note that although we have defined the template
-  [inline][inline], we can use the template stanza [in conjunction with the
-  artifact stanza][remote-template] to download an input template from a remote
+  [inline][inline], we can use the template block [in conjunction with the
+  artifact block][remote-template] to download an input template from a remote
   source such as an S3 bucket.
 - We are using the `toJSON` function to ensure the password is encoded as a JSON
   string. Any templated value which may contain special characters (like quotes
@@ -684,5 +684,5 @@ below </h2>
 [vault]: https://www.vaultproject.io/
 [vault-integration]: /docs/vault-integration/index.html
 [vault-jobspec]: /docs/job-specification/vault.html
-[vault-stanza]: /docs/configuration/vault.html
+[vault-block]: /docs/configuration/vault.html
 [web-service]: /assets/images/nomad-demo-app.png

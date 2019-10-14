@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "telemetry Stanza - Agent Configuration"
+page_title: "telemetry Block - Agent Configuration"
 sidebar_current: "docs-configuration-telemetry"
 description: |-
-  The "telemetry" stanza configures Nomad's publication of metrics and telemetry
+  The "telemetry" block configures Nomad's publication of metrics and telemetry
   to third-party systems.
 ---
 
-# `telemetry` Stanza
+# `telemetry` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -19,7 +19,7 @@ description: |-
 </table>
 
 
-The `telemetry` stanza configures Nomad's publication of metrics and telemetry
+The `telemetry` block configures Nomad's publication of metrics and telemetry
 to third-party systems.
 
 ```hcl
@@ -30,12 +30,12 @@ telemetry {
 ```
 
 This section of the documentation only covers the configuration options for
-`telemetry` stanza. To understand the architecture and metrics themselves,
+`telemetry` block. To understand the architecture and metrics themselves,
 please see the [Telemetry guide](/docs/telemetry/index.html).
 
 ## `telemetry` Parameters
 
-Due to the number of configurable parameters to the `telemetry` stanza,
+Due to the number of configurable parameters to the `telemetry` block,
 parameters on this page are grouped by the telemetry provider.
 
 ### Common

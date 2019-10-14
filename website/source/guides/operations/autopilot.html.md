@@ -13,7 +13,7 @@ operator-friendly management of Nomad servers. It includes cleanup of dead
 servers, monitoring the state of the Raft cluster, and stable server introduction.
 
 To enable Autopilot features (with the exception of dead server cleanup),
-the `raft_protocol` setting in the [server stanza](/docs/configuration/server.html)
+the `raft_protocol` setting in the [server block](/docs/configuration/server.html)
 must be set to 3 on all servers. This setting defaults to 2; a cluster configured with protocol 2 can be upgraded
 to protocol 3 with a rolling update, provided time for membership to stabilize following each server update.
 During an upgrade from raft protocol 2 to 3, use the `nomad operator raft list-peers`

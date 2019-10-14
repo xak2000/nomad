@@ -168,7 +168,7 @@ job "webserver" {
 }
 ```
 
-Notice the tag in the service stanza begins with `urlprefix-`. This is how a
+Notice the tag in the service block begins with `urlprefix-`. This is how a
 path is registered with fabio. In this case, we are registering the path '/'
 with fabio (which will route us to the default page for Apache web server). 
 

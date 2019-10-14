@@ -1,14 +1,14 @@
 ---
 layout: "docs"
-page_title: "artifact Stanza - Job Specification"
+page_title: "artifact Block - Job Specification"
 sidebar_current: "docs-job-specification-artifact"
 description: |-
-  The "artifact" stanza instructs Nomad to fetch and unpack a remote resource,
+  The "artifact" block instructs Nomad to fetch and unpack a remote resource,
   such as a file, tarball, or binary, and permits downloading artifacts from a
   variety of locations using a URL as the input source.
 ---
 
-# `artifact` Stanza
+# `artifact` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -19,7 +19,7 @@ description: |-
   </tr>
 </table>
 
-The `artifact` stanza instructs Nomad to fetch and unpack a remote resource,
+The `artifact` block instructs Nomad to fetch and unpack a remote resource,
 such as a file, tarball, or binary. Nomad downloads artifacts using the popular
 [`go-getter`][go-getter] library, which permits downloading artifacts from a
 variety of locations using a URL as the input source.
@@ -66,8 +66,8 @@ automatically unarchived before the starting the task.
 
 ## `artifact` Examples
 
-The following examples only show the `artifact` stanzas. Remember that the
-`artifact` stanza is only valid in the placements listed above.
+The following examples only show the `artifact` blocks. Remember that the
+`artifact` block is only valid in the placements listed above.
 
 ### Download File
 

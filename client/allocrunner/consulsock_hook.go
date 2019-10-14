@@ -21,7 +21,7 @@ import (
 // consulSockHook creates Unix sockets to allow communication from inside a
 // netns to Consul.
 //
-// Noop for allocations without a group Connect stanza.
+// Noop for allocations without a group Connect block.
 type consulSockHook struct {
 	alloc *structs.Allocation
 

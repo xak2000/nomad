@@ -57,13 +57,13 @@ Constructing rules from these policies is covered in detail in the Rule Specific
 
 Nomad supports multi-datacenter and multi-region configurations. A single region is able to service multiple datacenters, and all servers in a region replicate their state between each other. In a multi-region configuration, there is a set of servers per region. Each region operates independently and is loosely coupled to allow jobs to be scheduled in any region and requests to flow transparently to the correct region.
 
-When ACLs are enabled, Nomad depends on an "authoritative region" to act as a single source of truth for ACL policies and global ACL tokens. The authoritative region is configured in the [`server` stanza](/docs/configuration/server.html) of agents, and all regions must share a single authoritative source. Any ACL policies or global ACL tokens are created in the authoritative region first. All other regions replicate ACL policies and global ACL tokens to act as local mirrors. This allows policies to be administered centrally, and for enforcement to be local to each region for low latency.
+When ACLs are enabled, Nomad depends on an "authoritative region" to act as a single source of truth for ACL policies and global ACL tokens. The authoritative region is configured in the [`server` block](/docs/configuration/server.html) of agents, and all regions must share a single authoritative source. Any ACL policies or global ACL tokens are created in the authoritative region first. All other regions replicate ACL policies and global ACL tokens to act as local mirrors. This allows policies to be administered centrally, and for enforcement to be local to each region for low latency.
 
 Global ACL tokens are used to allow cross region requests. Standard ACL tokens are created in a single target region and not replicated. This means if a request takes place between regions, global tokens must be used so that both regions will have the token registered.
 
 # Configuring ACLs
 
-ACLs are not enabled by default, and must be enabled. Clients and Servers need to set `enabled` in the [`acl` stanza](/docs/configuration/acl.html). This enables the [ACL Policy](/api/acl-policies.html) and [ACL Token](/api/acl-tokens.html) APIs, as well as endpoint enforcement.
+ACLs are not enabled by default, and must be enabled. Clients and Servers need to set `enabled` in the [`acl` block](/docs/configuration/acl.html). This enables the [ACL Policy](/api/acl-policies.html) and [ACL Token](/api/acl-tokens.html) APIs, as well as endpoint enforcement.
 
 For multi-region configurations, all servers must be configured to use a single [authoritative region](/docs/configuration/server.html#authoritative_region). The authoritative region is responsible for managing ACL policies and global tokens. Servers in other regions will replicate policies and global tokens to act as a mirror, and must have their [`replication_token`](/docs/configuration/acl.html#replication_token) configured.
 
@@ -75,9 +75,9 @@ Bootstrapping ACLs on a new cluster requires a few steps, outlined below:
 
 The APIs needed to manage policies and tokens are not enabled until ACLs are enabled. To begin, we need to enable the ACLs on the servers. If a multi-region setup is used, the authoritative region should be enabled first. For each server:
 
-1. Set `enabled = true` in the [`acl` stanza](/docs/configuration/acl.html#enabled).
-1. Set `authoritative_region` in the [`server` stanza](/docs/configuration/server.html#authoritative_region).
-1. For servers outside the authoritative region, set `replication_token` in the [`acl` stanza](/docs/configuration/acl.html#replication_token). Replication tokens should be `management` type tokens which are either created in the authoritative region, or created as Global tokens.
+1. Set `enabled = true` in the [`acl` block](/docs/configuration/acl.html#enabled).
+1. Set `authoritative_region` in the [`server` block](/docs/configuration/server.html#authoritative_region).
+1. For servers outside the authoritative region, set `replication_token` in the [`acl` block](/docs/configuration/acl.html#replication_token). Replication tokens should be `management` type tokens which are either created in the authoritative region, or created as Global tokens.
 1. Restart the Nomad server to pick up the new configuration.
 
 Please take care to restart the servers one at a time, and ensure each server has joined and is operating correctly before restarting another.
@@ -104,7 +104,7 @@ The bootstrap token is a `management` type token, meaning it can perform any ope
 
 ### Enable ACLs on Nomad Clients
 
-To enforce client endpoints, we need to enable ACLs on clients as well. This is simpler than servers, and we just need to set `enabled = true` in the [`acl` stanza](/docs/configuration/acl.html). Once configured, we need to restart the client for the change.
+To enforce client endpoints, we need to enable ACLs on clients as well. This is simpler than servers, and we just need to set `enabled = true` in the [`acl` block](/docs/configuration/acl.html). Once configured, we need to restart the client for the change.
 
 
 ### Set an Anonymous Policy (Optional)
@@ -222,7 +222,7 @@ namespace "sensitive" {
 }
 ```
 
-Namespace rules are keyed by the namespace name they apply to. When no namespace is specified, the "default" namespace is the one used. For example, the above policy grants write access to the default namespace, and read access to the sensitive namespace. In addition to the coarse grained `policy` specification, the `namespace` stanza allows setting a more fine grained list of `capabilities`. This includes:
+Namespace rules are keyed by the namespace name they apply to. When no namespace is specified, the "default" namespace is the one used. For example, the above policy grants write access to the default namespace, and read access to the sensitive namespace. In addition to the coarse grained `policy` specification, the `namespace` block allows setting a more fine grained list of `capabilities`. This includes:
 
 * `deny` - When multiple policies are associated with a token, deny will take precedence and prevent any capabilities.
 * `list-jobs` - Allows listing the jobs and seeing coarse grain status.
@@ -362,7 +362,7 @@ host_volume "prod-ca-certificates" {
 }
 ```
 
-Host volume rules are keyed to the volume names that they apply to. As with namespaces, you may use wildcards to reuse the same configuration across a set of volumes. In addition to the coarse grained policy specification, the `host_volume` stanza allows setting a more fine grained list of capabilities. This includes:
+Host volume rules are keyed to the volume names that they apply to. As with namespaces, you may use wildcards to reuse the same configuration across a set of volumes. In addition to the coarse grained policy specification, the `host_volume` block allows setting a more fine grained list of capabilities. This includes:
 
 - `deny` - Do not allow a user to mount a volume in any way.
 - `mount-readonly` - Only allow the user to mount the volume as `readonly`

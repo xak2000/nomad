@@ -16,13 +16,13 @@ type TaskServices struct {
 	Canary bool
 
 	// Restarter allows restarting the task depending on the task's
-	// check_restart stanzas.
+	// check_restart blocks.
 	Restarter TaskRestarter
 
 	// Services and checks to register for the task.
 	Services []*structs.Service
 
-	// Networks from the task's resources stanza.
+	// Networks from the task's resources block.
 	Networks structs.Networks
 
 	// DriverExec is the script executor for the task's driver.

@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "proxy Stanza - Job Specification"
+page_title: "proxy Block - Job Specification"
 sidebar_current: "docs-job-specification-proxy"
 description: |-
-  The "proxy" stanza allows specifying options for configuring
+  The "proxy" block allows specifying options for configuring
   sidecar proxies used in Consul Connect integration
 ---
 
-# `proxy` Stanza
+# `proxy` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -18,10 +18,10 @@ description: |-
   </tr>
 </table>
 
-The `proxy` stanza allows configuring various options for the sidecar proxy
+The `proxy` block allows configuring various options for the sidecar proxy
 managed by Nomad for [Consul
 Connect](/guides/integrations/consul-connect/index.html).  It is valid only
-within the context of a `sidecar_service` stanza.
+within the context of a `sidecar_service` block.
 
 ```hcl
  job "countdash" {

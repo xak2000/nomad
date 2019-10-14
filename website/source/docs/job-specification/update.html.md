@@ -1,14 +1,14 @@
 ---
 layout: "docs"
-page_title: "update Stanza - Job Specification"
+page_title: "update Block - Job Specification"
 sidebar_current: "docs-job-specification-update"
 description: |-
-  The "update" stanza specifies the group's update strategy. The update strategy
+  The "update" block specifies the group's update strategy. The update strategy
   is used to control things like rolling upgrades and canary deployments. If
   omitted, rolling updates and canaries are disabled.
 ---
 
-# `update` Stanza
+# `update` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -21,12 +21,12 @@ description: |-
   </tr>
 </table>
 
-The `update` stanza specifies the group's update strategy. The update strategy
+The `update` block specifies the group's update strategy. The update strategy
 is used to control things like [rolling upgrades][rolling] and [canary
 deployments][canary]. If omitted, rolling updates and canaries are disabled. If
 specified at the job level, the configuration will apply to all groups within
-the job. If multiple `update` stanzas are specified, they are merged with the
-group stanza taking the highest precedence and then the job.
+the job. If multiple `update` blocks are specified, they are merged with the
+group block taking the highest precedence and then the job.
 
 ```hcl
 job "docs" {
@@ -47,7 +47,7 @@ job "docs" {
 ~> For `system` jobs, only [`max_parallel`](#max_parallel) and
    [`stagger`](#stagger) are enforced. The job is updated at a rate of
    `max_parallel`, waiting `stagger` duration before the next set of updates.
-   The `system` scheduler will be updated to support the new `update` stanza in
+   The `system` scheduler will be updated to support the new `update` block in
    a future release.
 
 ## `update` Parameters
@@ -113,8 +113,8 @@ job "docs" {
 
 ## `update` Examples
 
-The following examples only show the `update` stanzas. Remember that the
-`update` stanza is only valid in the placements listed above.
+The following examples only show the `update` blocks. Remember that the
+`update` block is only valid in the placements listed above.
 
 ### Parallel Upgrades Based on Checks
 
@@ -211,7 +211,7 @@ update {
 }
 ```
 
-### Upgrade Stanza Inheritance
+### Upgrade Block Inheritance
 
 This example shows how inheritance can simplify the job when there are multiple
 task groups.
@@ -244,8 +244,8 @@ job "example" {
 }
 ```
 
-By placing the shared parameters in the job's update stanza, each groups update
-stanza may be kept to a minimum. The merged update stanzas for each group
+By placing the shared parameters in the job's update block, each groups update
+block may be kept to a minimum. The merged update blocks for each group
 becomes:
 
 ```hcl

@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "group Stanza - Job Specification"
+page_title: "group Block - Job Specification"
 sidebar_current: "docs-job-specification-group"
 description: |-
-  The "group" stanza defines a series of tasks that should be co-located on the
+  The "group" block defines a series of tasks that should be co-located on the
   same Nomad client. Any task within a group will be placed on the same client.
 ---
 
-# `group` Stanza
+# `group` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -18,7 +18,7 @@ description: |-
   </tr>
 </table>
 
-The `group` stanza defines a series of tasks that should be co-located on the
+The `group` block defines a series of tasks that should be co-located on the
 same Nomad client. Any [task][] within a group will be placed on the same
 client.
 
@@ -55,7 +55,7 @@ job "docs" {
 
 - `migrate` <code>([Migrate][]: nil)</code> - Specifies the group strategy for
   migrating off of draining nodes. Only service jobs with a count greater than
-  1 support migrate stanzas.
+  1 support migrate blocks.
 
 - `reschedule` <code>([Reschedule][]: nil)</code> - Allows to specify a
   rescheduling strategy. Nomad will then attempt to schedule the task on another
@@ -63,7 +63,7 @@ job "docs" {
 
 - `restart` <code>([Restart][]: nil)</code> - Specifies the restart policy for
   all tasks in this group. If omitted, a default policy exists for each job
-  type, which can be found in the [restart stanza documentation][restart].
+  type, which can be found in the [restart block documentation][restart].
 
 - `task` <code>([Task][]: <required>)</code> - Specifies one or more tasks to run
   within this group. This can be specified multiple times, to add a task as part
@@ -78,8 +78,8 @@ job "docs" {
 
 ## `group` Examples
 
-The following examples only show the `group` stanzas. Remember that the
-`group` stanza is only valid in the placements listed above.
+The following examples only show the `group` blocks. Remember that the
+`group` block is only valid in the placements listed above.
 
 ### Specifying Count
 

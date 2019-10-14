@@ -3,16 +3,16 @@ layout: "guides"
 page_title: "Affinity"
 sidebar_current: "guides-operating-a-job-advanced-scheduling-affinity"
 description: |-
-   The following guide walks the user through using the affinity stanza in Nomad.
+   The following guide walks the user through using the affinity block in Nomad.
 ---
 
 # Expressing Job Placement Preferences with Affinities
 
-The [affinity][affinity-stanza] stanza allows operators to express placement preferences for their jobs on particular types of nodes. Note that there is a key difference between the [constraint][constraint] stanza and the affinity stanza. The constraint stanza strictly filters where jobs are run based on [attributes][attributes] and [client metadata][client-metadata]. If no nodes are found to match, the placement does not succeed. The affinity stanza acts like a "soft constraint." Nomad will attempt to match the desired affinity, but placement will succeed even if no nodes match the desired criteria. This is done in conjunction with scoring based on the Nomad scheduler's bin packing algorithm which you can read more about [here][scheduling].
+The [affinity][affinity-block] block allows operators to express placement preferences for their jobs on particular types of nodes. Note that there is a key difference between the [constraint][constraint] block and the affinity block. The constraint block strictly filters where jobs are run based on [attributes][attributes] and [client metadata][client-metadata]. If no nodes are found to match, the placement does not succeed. The affinity block acts like a "soft constraint." Nomad will attempt to match the desired affinity, but placement will succeed even if no nodes match the desired criteria. This is done in conjunction with scoring based on the Nomad scheduler's bin packing algorithm which you can read more about [here][scheduling].
 
 ## Reference Material
 
-- The [affinity][affinity-stanza] stanza documentation
+- The [affinity][affinity-block] block documentation
 - [Scheduling][scheduling] with Nomad
 
 ## Estimated Time to Complete
@@ -71,7 +71,7 @@ ID        DC   Name              Class   Drain  Eligibility  Status
 6b6e9518  dc2  ip-172-31-27-25   <none>  false  eligible     ready
 ```
 
-### Step 2: Create a Job with the `affinity` Stanza
+### Step 2: Create a Job with the `affinity` Block
 
 Create a file with the name `redis.nomad` and place the following content in it:
 
@@ -119,7 +119,7 @@ job "redis" {
  }
 }
 ```
-Note that we used the `affinity` stanza and specified `dc2` as the
+Note that we used the `affinity` block and specified `dc2` as the
 value for the [attribute][attributes] `${node.datacenter}`. We used the value `100` for the [weight][weight] which will cause the Nomad scheduler to rank nodes in datacenter `dc2` with a higher score. Keep in mind that weights can range from -100 to 100, inclusive. Negative weights serve as anti-affinities which cause Nomad to avoid placing allocations on nodes that match the criteria.
 
 ### Step 3: Register the Job `redis.nomad`
@@ -170,7 +170,7 @@ You can cross-check this output with the results of the `nomad node status` comm
 
 ### Step 5: Obtain Detailed Scoring Information on Job Placement
 
-The Nomad scheduler will not always place all of your workload on nodes you have specified in the `affinity` stanza even if the resources are available. This is because affinity scoring is combined with other metrics as well before making a scheduling decision. In this step, we will take a look at some of those other factors.
+The Nomad scheduler will not always place all of your workload on nodes you have specified in the `affinity` block even if the resources are available. This is because affinity scoring is combined with other metrics as well before making a scheduling decision. In this step, we will take a look at some of those other factors.
 
 Using the output from the previous step, find an allocation that has been placed
 on a node in `dc2` and use the nomad [alloc status][alloc status] command with
@@ -199,11 +199,11 @@ uses the final score for each node in deciding where to make placements.
 
 ## Next Steps
 
-Experiment with the weight provided in the `affinity` stanza (the value can be
+Experiment with the weight provided in the `affinity` block (the value can be
 from -100 through 100) and observe how the final score given to each node
 changes (use the `nomad alloc status` command as shown in the previous step).
 
-[affinity-stanza]: /docs/job-specification/affinity.html
+[affinity-block]: /docs/job-specification/affinity.html
 [alloc status]: /docs/commands/alloc/status.html
 [attributes]: /docs/runtime/interpolation.html#node-variables-
 [constraint]: /docs/job-specification/constraint.html

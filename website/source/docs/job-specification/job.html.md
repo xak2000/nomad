@@ -1,14 +1,14 @@
 ---
 layout: "docs"
-page_title: "job Stanza - Job Specification"
+page_title: "job Block - Job Specification"
 sidebar_current: "docs-job-specification-job"
 description: |-
-  The "job" stanza is the top-most configuration option in the job
+  The "job" block is the top-most configuration option in the job
   specification. A job is a declarative specification of tasks that Nomad
   should run.
 ---
 
-# `job` Stanza
+# `job` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -19,7 +19,7 @@ description: |-
   </tr>
 </table>
 
-The `job` stanza is the top-most configuration option in the job specification.
+The `job` block is the top-most configuration option in the job specification.
 A job is a declarative specification of tasks that Nomad should run. Jobs have
 one or more task groups, which are themselves collections of one or more tasks.
 Job names are unique per [region][region] or [namespace][namespace] (if Nomad
@@ -97,7 +97,7 @@ job "docs" {
 
 - `migrate` <code>([Migrate][]: nil)</code> - Specifies the groups strategy for
   migrating off of draining nodes. If omitted, a default migration strategy is
-  applied. Only service jobs with a count greater than 1 support migrate stanzas.
+  applied. Only service jobs with a count greater than 1 support migrate blocks.
 
 - `namespace` `(string: "default")` - The namespace in which to execute the job.
   Values other than default are not allowed in non-Enterprise versions of Nomad.
@@ -129,7 +129,7 @@ job "docs" {
 
 - `vault_token` `(string: "")` - Specifies the Vault token that proves the
   submitter of the job has access to the specified policies in the
-  [`vault`][vault] stanza. This field is only used to transfer the token and is
+  [`vault`][vault] block. This field is only used to transfer the token and is
   not stored after job submission.
 
     !> It is **strongly discouraged** to place the token as a configuration
@@ -139,8 +139,8 @@ job "docs" {
 
 ## `job` Examples
 
-The following examples only show the `job` stanzas. Remember that the
-`job` stanza is only valid in the placements listed above.
+The following examples only show the `job` blocks. Remember that the
+`job` block is only valid in the placements listed above.
 
 ### Docker Container
 

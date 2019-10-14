@@ -1,14 +1,14 @@
 ---
 layout: "docs"
-page_title: "volume Stanza - Job Specification"
+page_title: "volume Block - Job Specification"
 sidebar_current: "docs-job-specification-volume"
 description: |-
-   The "volume" stanza allows the group to specify that it requires a given volume
+   The "volume" block allows the group to specify that it requires a given volume
    from the cluster. Nomad will automatically handle ensuring that the volume is
    available and mounted into the task.
 ---
 
-# `volume` Stanza
+# `volume` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -19,10 +19,10 @@ description: |-
   </tr>
 </table>
 
-The `volume` stanza allows the group to specify that it requires a given volume
+The `volume` block allows the group to specify that it requires a given volume
 from the cluster.
 
-The key of the stanza is the name of the volume as it will be exposed to task
+The key of the block is the name of the volume as it will be exposed to task
 configuration.
 
 ```hcl
@@ -39,10 +39,10 @@ job "docs" {
 
 The Nomad server will ensure that the allocations are only scheduled on hosts
 that have a set of volumes that meet the criteria specified in the `volume`
-stanzas.
+blocks.
 
 The Nomad client will make the volumes available to tasks according to the
-[volume_mount][volume_mount] stanza in the `task` configuration.
+[volume_mount][volume_mount] block in the `task` configuration.
 
 ## `volume` Parameters
 

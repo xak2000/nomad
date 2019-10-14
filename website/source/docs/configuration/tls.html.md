@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "tls Stanza - Agent Configuration"
+page_title: "tls Block - Agent Configuration"
 sidebar_current: "docs-configuration-tls"
 description: |-
-  The "tls" stanza configures Nomad's TLS communication via HTTP and RPC to
+  The "tls" block configures Nomad's TLS communication via HTTP and RPC to
   enforce secure cluster communication between servers, clients, and between.
 ---
 
-# `tls` Stanza
+# `tls` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -18,7 +18,7 @@ description: |-
   </tr>
 </table>
 
-The `tls` stanza configures Nomad's TLS communication via HTTP and RPC to
+The `tls` block configures Nomad's TLS communication via HTTP and RPC to
 enforce secure cluster communication between servers, clients, and between.
 
 ```hcl
@@ -32,7 +32,7 @@ tls {
 start the Nomad agent.
 
 This section of the documentation only covers the configuration options for
-`tls` stanza. To understand how to setup the certificates themselves, please see
+`tls` block. To understand how to setup the certificates themselves, please see
 the [Encryption Overview Guide](/guides/security/encryption.html).
 
 ## `tls` Parameters
@@ -87,8 +87,8 @@ the [Encryption Overview Guide](/guides/security/encryption.html).
 
 ## `tls` Examples
 
-The following examples only show the `tls` stanzas. Remember that the
-`tls` stanza is only valid in the placements listed above.
+The following examples only show the `tls` blocks. Remember that the
+`tls` block is only valid in the placements listed above.
 
 ### Enabling TLS
 

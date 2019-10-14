@@ -108,12 +108,12 @@ Twelve-Factor App](https://12factor.net/config) document suggests configuring
 applications through environment variables. Nomad supports custom environment
 variables in two ways:
 
-* Interpolation in an `env` stanza
-* Templated in the a `template` stanza
+* Interpolation in an `env` block
+* Templated in the a `template` block
 
-### `env` stanza
+### `env` block
 
-Each task may have an `env` stanza which specifies environment variables:
+Each task may have an `env` block which specifies environment variables:
 
 ```hcl
 task "server" {
@@ -123,7 +123,7 @@ task "server" {
 }
 ```
 
-The `env` stanza also supports
+The `env` block also supports
 [interpolation](/docs/runtime/interpolation.html):
 
 ```hcl
@@ -139,7 +139,7 @@ See the [`env`](/docs/job-specification/env.html) docs for details.
 
 ### Environment Templates
 
-Nomad's [`template`][template] stanza can be used
+Nomad's [`template`][template] block can be used
 to generate environment variables. Environment variables may be templated with
 [Node attributes and metadata][nodevars], the contents of files on disk, Consul
 keys, or secrets from Vault:

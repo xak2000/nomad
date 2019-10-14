@@ -1,15 +1,15 @@
 ---
 layout: "docs"
-page_title: "network Stanza - Job Specification"
+page_title: "network Block - Job Specification"
 sidebar_current: "docs-job-specification-network"
 description: |-
-  The "network" stanza specifies the networking requirements for the task,
-  including the minimum bandwidth and port allocations. The network stanza
+  The "network" block specifies the networking requirements for the task,
+  including the minimum bandwidth and port allocations. The network block
   can be specified at the task group level to enable all tasks in the task
   group to share the same network namespace.
 ---
 
-# `network` Stanza
+# `network` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -26,15 +26,15 @@ description: |-
   </tr>
 </table>
 
-The `network` stanza specifies the networking requirements for the task,
+The `network` block specifies the networking requirements for the task,
 including the minimum bandwidth and port allocations. When scheduling jobs in
 Nomad they are provisioned across your fleet of machines along with other jobs
 and services. Because you don't know in advance what host your job will be
 provisioned on, Nomad will provide your tasks with network configuration when
 they start up.
 
-Nomad 0.10 enables support for the `network` stanza at the task group level. When
-the `network` stanza is defined at the group level with `bridge` as the networking mode,
+Nomad 0.10 enables support for the `network` block at the task group level. When
+the `network` block is defined at the group level with `bridge` as the networking mode,
 all tasks in the task group share the same network namespace. This is a prerequisite for
 [Consul Connect](/guides/integrations/consul-connect/index.html). Tasks running within a
 network namespace are not visible to applications outside the namespace on the same host.
@@ -108,8 +108,8 @@ The label of the port is just text - it has no special meaning to Nomad.
 
 ## `network` Examples
 
-The following examples only show the `network` stanzas. Remember that the
-`network` stanza is only valid in the placements listed above.
+The following examples only show the `network` blocks. Remember that the
+`network` block is only valid in the placements listed above.
 
 ### Bandwidth
 
@@ -197,7 +197,7 @@ bound to.
 
 ### Bridge Mode
 
-The following example is a group level network stanza that uses bridge mode
+The following example is a group level network block that uses bridge mode
 and port mapping.
 
 ```hcl
@@ -216,4 +216,4 @@ network {
 
 ### Limitations
 
-Only one `network` stanza can be specified, when it is defined at the task group level.
+Only one `network` block can be specified, when it is defined at the task group level.

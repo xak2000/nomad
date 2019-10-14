@@ -104,14 +104,14 @@ TasksMax=infinity
 WantedBy=multi-user.target
 ```
 
-The following parameters are set for the `[Unit]` stanza:
+The following parameters are set for the `[Unit]` block:
 
 - [`Description`](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Description=) - Free-form string describing the nomad service
 - [`Documentation`](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Documentation=) - Link to the nomad documentation
 - [`Wants`](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Wants=) - Configure a dependency on the network service
 - [`After`](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#After=) - Configure an ordering dependency on the network service being started before the nomad service
 
-The following parameters are set for the `[Service]` stanza:
+The following parameters are set for the `[Service]` block:
 
 - [`ExecReload`](https://www.freedesktop.org/software/systemd/man/systemd.service.html#ExecReload=) - Send Nomad a `SIGHUP` signal to trigger a configuration reload
 - [`ExecStart`](https://www.freedesktop.org/software/systemd/man/systemd.service.html#ExecStart=) - Start Nomad with the `agent` argument and path to a directory of configuration files
@@ -122,7 +122,7 @@ The following parameters are set for the `[Service]` stanza:
 - [`StartLimitBurst`, `StartLimitIntervalSec`](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#StartLimitIntervalSec=interval) - Configure unit start rate limiting
 - [`TasksMax`](https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#TasksMax=N) - Disable task limits (only available in systemd >= 226)
 
-The following parameters are set for the `[Install]` stanza:
+The following parameters are set for the `[Install]` block:
 
 - [`WantedBy`](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#WantedBy=) - Creates a weak dependency on nomad being started by the multi-user run level
 

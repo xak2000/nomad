@@ -190,7 +190,7 @@ over HTTP.
 
 ## Client Configuration
 
-~> Note: client configuration options will soon be deprecated. Please use [plugin options][plugin-options] instead. See the [plugin stanza][plugin-stanza] documentation for more information.
+~> Note: client configuration options will soon be deprecated. Please use [plugin options][plugin-options] instead. See the [plugin block][plugin-block] documentation for more information.
 
 The `rkt` driver has the following [client configuration
 options](/docs/configuration/client.html#options):
@@ -231,4 +231,4 @@ isolation is not supported as of now.
 
 [user]: /docs/job-specification/task.html#user
 [plugin-options]: #plugin-options
-[plugin-stanza]: /docs/configuration/plugin.html
+[plugin-block]: /docs/configuration/plugin.html

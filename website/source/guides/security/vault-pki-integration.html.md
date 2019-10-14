@@ -359,7 +359,7 @@ can download it [here][ct-download].
 Provide the token you created in [Step
 9](#step-9-generate-a-token-based-on-tls-policy) to the Consul Template
 configuration file located at `/etc/consul-template.d/consul-template.hcl`. You
-will also need to specify the [template stanza][ct-template-stanza] so you can
+will also need to specify the [template block][ct-template-block] so you can
 render each of the following on your nodes at the specified location from the
 templates you created in the previous step:
 
@@ -367,7 +367,7 @@ templates you created in the previous step:
 * Node private key
 * CA public certificate
 
-We will also specify the template stanza to create certs and keys from the
+We will also specify the template block to create certs and keys from the
 templates we previously created for the Nomad CLI (which defaults to HTTP but
 will need to use HTTPS once once TLS is enabled in our cluster).
 
@@ -449,7 +449,7 @@ template {
   command     = "systemctl reload nomad"
 }
 
-# The following template stanzas are for the CLI certs
+# The following template blocks are for the CLI certs
 
 template {
   source      = "/opt/nomad/templates/cli.crt.tpl"
@@ -497,7 +497,7 @@ cli.crt  cli.key
 
 ### Step 13: Configure Nomad to Use TLS
 
-Add the following [tls stanza][nomad-tls-stanza] to the configuration of all
+Add the following [tls block][nomad-tls-block] to the configuration of all
 Nomad agents (servers and clients) in the cluster (configuration file located at
 `/etc/nomad.d/nomad.hcl` in this example):
 
@@ -619,9 +619,9 @@ restart nomad`.
 [consul-template]: https://www.consul.io/docs/guides/consul-template.html
 [consul-template-github]: https://github.com/hashicorp/consul-template
 [ct-download]: https://releases.hashicorp.com/consul-template/
-[ct-template-stanza]: https://github.com/hashicorp/consul-template#configuration-file-format
+[ct-template-block]: https://github.com/hashicorp/consul-template#configuration-file-format
 [login]: https://www.vaultproject.io/docs/commands/login.html
-[nomad-tls-stanza]: https://www.nomadproject.io/docs/configuration/tls.html
+[nomad-tls-block]: https://www.nomadproject.io/docs/configuration/tls.html
 [policies]: https://www.vaultproject.io/docs/concepts/policies.html#policies
 [pki-engine]: https://www.vaultproject.io/docs/secrets/pki/index.html
 [repo]: https://github.com/hashicorp/nomad/tree/master/terraform

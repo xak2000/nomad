@@ -20,23 +20,23 @@ standard upgrade flow.
 ### Deployments
 
 Nomad 0.10 enables rolling deployments for service jobs by default
-and adds a default update stanza when a service job is created or updated.
-This does not affect jobs with an update stanza.
+and adds a default update block when a service job is created or updated.
+This does not affect jobs with an update block.
 
-In pre-0.10 releases, when updating a service job without an update stanza,
+In pre-0.10 releases, when updating a service job without an update block,
 all existing allocations are stopped while new allocations start up,
 and this may cause a service degradation or an outage.
 You can regain this behavior and disable deployments by setting `max_parallel` to 0.
 
-For more information, see [`update` stanza][update].
+For more information, see [`update` block][update].
 
 ## Nomad 0.9.5
 
 ### Template Rendering
 
-Nomad 0.9.5 includes security fixes for privilege escalation vulnerabilities in handling of job `template` stanzas:
+Nomad 0.9.5 includes security fixes for privilege escalation vulnerabilities in handling of job `template` blocks:
 
- * The client host's environment variables are now cleaned before rendering the template. If a template includes the `env` function, the job should include an [`env`](https://www.nomadproject.io/docs/job-specification/env.html) stanza to allow access to the variable in the template.
+ * The client host's environment variables are now cleaned before rendering the template. If a template includes the `env` function, the job should include an [`env`](https://www.nomadproject.io/docs/job-specification/env.html) block to allow access to the variable in the template.
  * The `plugin` function is no longer permitted by default and will raise an error if used in a template. Operator can opt-in to permitting this function with the new [`template.function_blacklist`](https://www.nomadproject.io/docs/configuration/client.html#template-parameters) field in the client configuration.
  * The `file` function has been changed to restrict paths to fall inside the task directory by default. Paths that used the `NOMAD_TASK_DIR` environment variable to prefix file paths should work unchanged. Relative paths or symlinks that point outside the task directory will raise an error. An operator can opt-out of this protection with the new [`template.disable_file_sandbox`](https://www.nomadproject.io/docs/configuration/client.html#template-parameters) field in the client configuration.
 
@@ -56,13 +56,13 @@ All task drivers have become [plugins][plugins] in Nomad 0.9.0. There are two
 user visible differences between 0.8 and 0.9 drivers:
 
  * [LXC][lxc] is now community supported and distributed independently.
- * Task driver [`config`][task-config] stanzas are no longer validated by
+ * Task driver [`config`][task-config] blocks are no longer validated by
    the [`nomad job validate`][validate] command. This is a regression that will
    be fixed in a future release.
 
 There is a new method for client driver configuration options, but existing
 `client.options` settings are supported in 0.9. See [plugin
-configuration][plugin-stanza] for details.
+configuration][plugin-block] for details.
 
 #### LXC
 
@@ -108,7 +108,7 @@ env {
   image.version = "3.2"
 }
 
-# v0.8 task config stanza:
+# v0.8 task config block:
 task {
   driver = "docker"
   config {
@@ -116,7 +116,7 @@ task {
   }
 }
 
-# v0.9 task config stanza:
+# v0.9 task config block:
 task {
   driver = "docker"
   config {
@@ -126,7 +126,7 @@ task {
 ```
 
 This only affects users who interpolate unusual variables with multiple
-consecutive dots in their task `config` stanza. All other interpolation is
+consecutive dots in their task `config` block. All other interpolation is
 unchanged.
 
 Since HCL2 uses dotted object notation for interpolation users should
@@ -144,7 +144,7 @@ To downgrade safely, users should erase the Nomad client's data directory.
 When upgrading to Nomad 0.8.0 from a version lower than 0.7.0, users will need
 to set the
 [`raft_protocol`](/docs/configuration/server.html#raft_protocol) option
-in their `server` stanza to 1 in order to maintain backwards compatibility with
+in their `server` block to 1 in order to maintain backwards compatibility with
 the old servers during the upgrade.  After the servers have been migrated to
 version 0.8.0, `raft_protocol` can be moved up to 2 and the servers restarted
 to match the default.
@@ -181,7 +181,7 @@ This section provides details on upgrading to Raft Protocol 3 in Nomad 0.8 and h
 
 Please note that the Raft protocol is different from Nomad's internal protocol as shown in commands like `nomad server members`. To see the version of the Raft protocol in use on each server, use the `nomad operator raft list-peers` command.
 
-The easiest way to upgrade servers is to have each server leave the cluster, upgrade its `raft_protocol` version in the `server` stanza, and then add it back. Make sure the new server joins successfully and that the cluster is stable before rolling the upgrade forward to the next server. It's also possible to stand up a new set of servers, and then slowly stand down each of the older servers in a similar fashion.
+The easiest way to upgrade servers is to have each server leave the cluster, upgrade its `raft_protocol` version in the `server` block, and then add it back. Make sure the new server joins successfully and that the cluster is stable before rolling the upgrade forward to the next server. It's also possible to stand up a new set of servers, and then slowly stand down each of the older servers in a similar fashion.
 
 When using Raft protocol version 3, servers are identified by their `node-id` instead of their IP address when Nomad makes changes to its internal Raft quorum configuration. This means that once a cluster has been upgraded with servers all running Raft protocol version 3, it will no longer allow servers running any older Raft protocol versions to be added. If running a single Nomad server, restarting it in-place will result in that server not being able to elect itself as a leader. To avoid this, either set the Raft protocol back to 2, or use [Manual Recovery Using peers.json](/guides/operations/outage.html#manual-recovery-using-peers-json) to map the server to its node ID in the Raft quorum configuration.
 
@@ -191,7 +191,7 @@ When using Raft protocol version 3, servers are identified by their `node-id` in
 Node draining via the [`node drain`][drain-cli] command or the [drain
 API][drain-api] has been substantially changed in Nomad 0.8. In Nomad 0.7.1 and
 earlier draining a node would immediately stop all allocations on the node
-being drained. Nomad 0.8 now supports a [`migrate`][migrate] stanza in job
+being drained. Nomad 0.8 now supports a [`migrate`][migrate] block in job
 specifications to control how many allocations may be migrated at once and the
 default will be used for existing jobs.
 
@@ -199,7 +199,7 @@ The `drain` command now blocks until the drain completes. To get the Nomad
 0.7.1 and earlier drain behavior use the command: `nomad node drain -enable
 -force -detach <node-id>`
 
-See the [`migrate` stanza documentation][migrate] and [Decommissioning Nodes
+See the [`migrate` block documentation][migrate] and [Decommissioning Nodes
 guide](/guides/operations/node-draining.html) for details.
 
 ### Periods in Environment Variable Names No Longer Escaped
@@ -209,12 +209,12 @@ with underscores must be updated.*
 
 In Nomad 0.7 periods (`.`) in environment variables names were replaced with an
 underscore in both the [`env`](/docs/job-specification/env.html) and
-[`template`](/docs/job-specification/template.html) stanzas.
+[`template`](/docs/job-specification/template.html) blocks.
 
 In Nomad 0.8 periods are *not* replaced and will be included in environment
 variables verbatim.
 
-For example the following stanza:
+For example the following block:
 
 ```text
 env {
@@ -368,7 +368,7 @@ deleted and then Nomad 0.3.0 can be launched.
 [lxc]: /docs/drivers/external/lxc.html
 [migrate]: /docs/job-specification/migrate.html
 [plugins]: /docs/drivers/external/index.html
-[plugin-stanza]: /docs/configuration/plugin.html
+[plugin-block]: /docs/configuration/plugin.html
 [preemption]: /docs/internals/scheduling/preemption.html
 [task-config]: /docs/job-specification/task.html#config
 [validate]: /docs/commands/job/validate.html

@@ -1233,8 +1233,8 @@ func TestReconciler_MultiTG(t *testing.T) {
 }
 
 // Tests the reconciler properly handles jobs with multiple task groups with
-// only one having an update stanza and a deployment already being created
-func TestReconciler_MultiTG_SingleUpdateStanza(t *testing.T) {
+// only one having an update block and a deployment already being created
+func TestReconciler_MultiTG_SingleUpdateBlock(t *testing.T) {
 	job := mock.Job()
 	tg2 := job.TaskGroups[0].Copy()
 	tg2.Name = "foo"
@@ -1746,7 +1746,7 @@ func TestReconciler_RescheduleNow_Service(t *testing.T) {
 	tgName := job.TaskGroups[0].Name
 	now := time.Now()
 
-	// Set up reschedule policy and update stanza
+	// Set up reschedule policy and update block
 	job.TaskGroups[0].ReschedulePolicy = &structs.ReschedulePolicy{
 		Attempts:      1,
 		Interval:      24 * time.Hour,
@@ -1826,7 +1826,7 @@ func TestReconciler_RescheduleNow_WithinAllowedTimeWindow(t *testing.T) {
 	tgName := job.TaskGroups[0].Name
 	now := time.Now()
 
-	// Set up reschedule policy and update stanza
+	// Set up reschedule policy and update block
 	job.TaskGroups[0].ReschedulePolicy = &structs.ReschedulePolicy{
 		Attempts:      1,
 		Interval:      24 * time.Hour,
@@ -1905,7 +1905,7 @@ func TestReconciler_RescheduleNow_EvalIDMatch(t *testing.T) {
 	tgName := job.TaskGroups[0].Name
 	now := time.Now()
 
-	// Set up reschedule policy and update stanza
+	// Set up reschedule policy and update block
 	job.TaskGroups[0].ReschedulePolicy = &structs.ReschedulePolicy{
 		Attempts:      1,
 		Interval:      24 * time.Hour,
@@ -1986,7 +1986,7 @@ func TestReconciler_RescheduleNow_Service_WithCanaries(t *testing.T) {
 	tgName := job.TaskGroups[0].Name
 	now := time.Now()
 
-	// Set up reschedule policy and update stanza
+	// Set up reschedule policy and update block
 	job.TaskGroups[0].ReschedulePolicy = &structs.ReschedulePolicy{
 		Attempts:      1,
 		Interval:      24 * time.Hour,
@@ -2094,7 +2094,7 @@ func TestReconciler_RescheduleNow_Service_Canaries(t *testing.T) {
 	tgName := job.TaskGroups[0].Name
 	now := time.Now()
 
-	// Set up reschedule policy and update stanza
+	// Set up reschedule policy and update block
 	job.TaskGroups[0].ReschedulePolicy = &structs.ReschedulePolicy{
 		Delay:         5 * time.Second,
 		DelayFunction: "constant",
@@ -2219,7 +2219,7 @@ func TestReconciler_RescheduleNow_Service_Canaries_Limit(t *testing.T) {
 	tgName := job.TaskGroups[0].Name
 	now := time.Now()
 
-	// Set up reschedule policy and update stanza
+	// Set up reschedule policy and update block
 	job.TaskGroups[0].ReschedulePolicy = &structs.ReschedulePolicy{
 		Attempts:      1,
 		Interval:      24 * time.Hour,
@@ -4653,7 +4653,7 @@ func TestReconciler_ForceReschedule_Service(t *testing.T) {
 	job.TaskGroups[0].Count = 5
 	tgName := job.TaskGroups[0].Name
 
-	// Set up reschedule policy and update stanza
+	// Set up reschedule policy and update block
 	job.TaskGroups[0].ReschedulePolicy = &structs.ReschedulePolicy{
 		Attempts:      1,
 		Interval:      24 * time.Hour,
@@ -4729,7 +4729,7 @@ func TestReconciler_RescheduleNot_Service(t *testing.T) {
 	tgName := job.TaskGroups[0].Name
 	now := time.Now()
 
-	// Set up reschedule policy and update stanza
+	// Set up reschedule policy and update block
 	job.TaskGroups[0].ReschedulePolicy = &structs.ReschedulePolicy{
 		Attempts:      0,
 		Interval:      24 * time.Hour,

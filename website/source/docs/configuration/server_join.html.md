@@ -1,12 +1,12 @@
 ---
 layout: "docs"
-page_title: "server_join Stanza - Agent Configuration"
+page_title: "server_join Block - Agent Configuration"
 sidebar_current: "docs-configuration--server-join"
 description: |-
-  The "server_join" stanza specifies how the Nomad agent will discover and connect to Nomad servers.
+  The "server_join" block specifies how the Nomad agent will discover and connect to Nomad servers.
 ---
 
-# `server_join` Stanza
+# `server_join` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -19,7 +19,7 @@ description: |-
   </tr>
 </table>
 
-The `server_join` stanza specifies how the Nomad agent will discover and connect
+The `server_join` block specifies how the Nomad agent will discover and connect
 to Nomad servers.
 
 ```hcl

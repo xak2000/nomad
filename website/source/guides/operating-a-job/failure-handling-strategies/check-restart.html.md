@@ -1,17 +1,17 @@
 ---
 layout: "guides"
-page_title: "Check Restart Stanza - Operating a Job"
+page_title: "Check Restart Block - Operating a Job"
 sidebar_current: "guides-operating-a-job-failure-handling-strategies-check-restart"
 description: |-
   Nomad can restart tasks if they have a failing health check based on
-  configuration specified in the `check_restart` stanza. Restarts are done locally on the node
+  configuration specified in the `check_restart` block. Restarts are done locally on the node
   running the task based on their `restart` policy.
 ---
 
-# Check Restart Stanza
+# Check Restart Block
 
-The [`check_restart` stanza][check restart] instructs Nomad when to restart tasks with unhealthy service checks.
-When a health check in Consul has been unhealthy for the limit specified in a check_restart stanza,
+The [`check_restart` block][check restart] instructs Nomad when to restart tasks with unhealthy service checks.
+When a health check in Consul has been unhealthy for the limit specified in a check_restart block,
 it is restarted according to the task group's restart policy.
 
 The `limit ` field is used to specify the number of times a failing healthcheck is seen before local restarts are attempted.
@@ -22,7 +22,7 @@ is applicable in cases like temporary memory issues on the service.
 
 # Example
 
-The following `check_restart` stanza waits for two consecutive health check failures with a
+The following `check_restart` block waits for two consecutive health check failures with a
 grace period and considers both `critical` and `warning` statuses as failures
 
 ```text
@@ -76,4 +76,4 @@ Time                       Type              Description
 2018-04-12T17:49:53-05:00  Started           Task started by client
 ```
 
-[check restart]: /docs/job-specification/check_restart.html "Nomad check restart Stanza"
+[check restart]: /docs/job-specification/check_restart.html "Nomad check restart Block"

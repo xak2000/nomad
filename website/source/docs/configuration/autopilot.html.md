@@ -1,12 +1,12 @@
 ---
 layout: "docs"
-page_title: "autopilot Stanza - Agent Configuration"
+page_title: "autopilot Block - Agent Configuration"
 sidebar_current: "docs-configuration-autopilot"
 description: |-
-  The "autopilot" stanza configures the Nomad agent to configure Autopilot behavior.
+  The "autopilot" block configures the Nomad agent to configure Autopilot behavior.
 ---
 
-# `autopilot` Stanza
+# `autopilot` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -17,7 +17,7 @@ description: |-
   </tr>
 </table>
 
-The `autopilot` stanza configures the Nomad agent to configure Autopilot behavior.
+The `autopilot` block configures the Nomad agent to configure Autopilot behavior.
 For more information about Autopilot, see the [Autopilot Guide](/guides/operations/autopilot.html).
 
 ```hcl

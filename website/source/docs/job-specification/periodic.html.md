@@ -1,14 +1,14 @@
 ---
 layout: "docs"
-page_title: "periodic Stanza - Job Specification"
+page_title: "periodic Block - Job Specification"
 sidebar_current: "docs-job-specification-periodic"
 description: |-
-  The "periodic" stanza allows a job to run at fixed times, dates, or intervals.
+  The "periodic" block allows a job to run at fixed times, dates, or intervals.
   The easiest way to think about the periodic scheduler is "Nomad cron" or
   "distributed cron".
 ---
 
-# `periodic` Stanza
+# `periodic` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -19,7 +19,7 @@ description: |-
   </tr>
 </table>
 
-The `periodic` stanza allows a job to run at fixed times, dates, or intervals.
+The `periodic` block allows a job to run at fixed times, dates, or intervals.
 The easiest way to think about the periodic scheduler is "Nomad cron" or
 "distributed cron".
 
@@ -57,8 +57,8 @@ consistent evaluation when Nomad spans multiple time zones.
 
 ## `periodic` Examples
 
-The following examples only show the `periodic` stanzas. Remember that the
-`periodic` stanza is only valid in the placements listed above.
+The following examples only show the `periodic` blocks. Remember that the
+`periodic` block is only valid in the placements listed above.
 
 ### Run Daily
 

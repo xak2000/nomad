@@ -73,7 +73,7 @@ func (tr *TaskRunner) initHooks() {
 	// If Vault is enabled, add the hook
 	if task.Vault != nil {
 		tr.runnerHooks = append(tr.runnerHooks, newVaultHook(&vaultHookConfig{
-			vaultStanza: task.Vault,
+			vaultBlock: task.Vault,
 			client:      tr.vaultClient,
 			events:      tr,
 			lifecycle:   tr,

@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "sidecar_service Stanza - Job Specification"
+page_title: "sidecar_service Block - Job Specification"
 sidebar_current: "docs-job-specification-sidecar-service"
 description: |-
-  The "sidecar_service" stanza allows specifying options for configuring
+  The "sidecar_service" block allows specifying options for configuring
   sidecar proxies used in Consul Connect integration
 ---
 
-# `sidecar_service` Stanza
+# `sidecar_service` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -18,10 +18,10 @@ description: |-
   </tr>
 </table>
 
-The `sidecar_service` stanza allows configuring various options for the sidecar
+The `sidecar_service` block allows configuring various options for the sidecar
 proxy managed by Nomad for [Consul
 Connect](/guides/integrations/consul-connect/index.html) integration.  It is
-valid only within the context of a connect stanza.
+valid only within the context of a connect block.
 
 ```hcl
  job "countdash" {
@@ -59,7 +59,7 @@ valid only within the context of a connect stanza.
 
 ## `sidecar_service` Examples
 
-The following example is a minimal `sidecar_service` stanza with defaults
+The following example is a minimal `sidecar_service` block with defaults
 
 ```hcl
   connect {

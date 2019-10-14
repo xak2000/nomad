@@ -1,12 +1,12 @@
 ---
 layout: "docs"
-page_title: "sentinel Stanza - Agent Configuration"
+page_title: "sentinel Block - Agent Configuration"
 sidebar_current: "docs-configuration-sentinel"
 description: |-
-  The "sentinel" stanza configures the Nomad agent for Sentinel policies and tune various parameters.
+  The "sentinel" block configures the Nomad agent for Sentinel policies and tune various parameters.
 ---
 
-# `sentinel` Stanza
+# `sentinel` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -17,7 +17,7 @@ description: |-
   </tr>
 </table>
 
-The `sentinel` stanza configures the Sentinel policy engine and tunes various parameters.
+The `sentinel` block configures the Sentinel policy engine and tunes various parameters.
 
 ```hcl
 sentinel {

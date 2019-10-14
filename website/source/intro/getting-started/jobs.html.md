@@ -258,7 +258,7 @@ potentially invalid.
 
 The plan output shows us that one allocation will be updated and that the other
 two will be ignored. This is due to the `max_parallel` setting in the `update`
-stanza, which is set to 1 to instruct Nomad to perform only a single change at
+block, which is set to 1 to instruct Nomad to perform only a single change at
 a time.
 
 Once ready, use `run` to push the updated specification:

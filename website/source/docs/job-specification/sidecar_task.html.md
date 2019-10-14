@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "sidecar_service Stanza - Job Specification"
+page_title: "sidecar_service Block - Job Specification"
 sidebar_current: "docs-job-specification-sidecar-task"
 description: |-
-  The "sidecar_task" stanza allows specifying options for configuring
+  The "sidecar_task" block allows specifying options for configuring
   the task of the sidecar proxies used in Consul Connect integration
 ---
 
-# `sidecar_task` Stanza
+# `sidecar_task` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -18,11 +18,11 @@ description: |-
   </tr>
 </table>
 
-The `sidecar_task` stanza allows configuring various options for the proxy
+The `sidecar_task` block allows configuring various options for the proxy
 sidecar managed by Nomad for [Consul
 Connect](/guides/integrations/consul-connect/index.html) integration such as
 resource requirements, kill timeouts and more as defined below. It is valid
-only within the context of a [`connect`][connect] stanza.
+only within the context of a [`connect`][connect] block.
 
 ```hcl
  job "countdash" {
@@ -60,7 +60,7 @@ only within the context of a [`connect`][connect] stanza.
 ## Default Envoy proxy sidecar
 
 Nomad automatically includes a default Envoy proxy sidecar task whenever a
-group service has a [`sidecar_service`][sidecar_service] stanza.
+group service has a [`sidecar_service`][sidecar_service] block.
 
 The default sidecar task is equivalent to:
 

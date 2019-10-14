@@ -102,7 +102,7 @@ sudo chown «Nomad user» /opt/mysql/data
 
 Edit the Nomad configuration on this Nomad client to create the Host Volume.
 
-Add the following to the `client` stanza of your Nomad configuration:
+Add the following to the `client` block of your Nomad configuration:
 
 ```hcl
   host_volume "mysql" {
@@ -209,14 +209,14 @@ job "mysql-server" {
 - The service name is `mysql-server` which we will use later to connect to the
   database.
 
-- The `read_only` argument is supplied on all of the volume-related stanzas in
+- The `read_only` argument is supplied on all of the volume-related blocks in
   to help highlight all of the places you would need to change to make a
   read-only volume mount. Please see the [`host_volume`][host_volume spec],
   [`volume`][volume spec], and [`volume_mount`][volume_mount spec] specifications
   for more details.
 
 - For lower-memory instances, you might need to reduce the requested memory in
-  the resources stanza to harmonize with available resources in your cluster.
+  the resources block to harmonize with available resources in your cluster.
 
 ### Step 4: Deploy the MySQL database
 
@@ -375,7 +375,7 @@ Once you have completed this guide, you should perform the following cleanup ste
 
 - Stop and purge the `mysql-server` job.
 
-- Remove the `host_volume "mysql"` stanza from your Nomad client configuration
+- Remove the `host_volume "mysql"` block from your Nomad client configuration
   and restart the Nomad service on that client
 
 - Remove the /opt/mysql/data folder and as much of the directory tree that you
@@ -383,7 +383,7 @@ Once you have completed this guide, you should perform the following cleanup ste
 
 [Prerequisite 1]: #prerequisite-1-install-the-mysql-client
 [Step 3]: #step-3-create-the-mysql-nomad-job-file
-[host_volume spec]: /docs/configuration/client.html#host_volume-stanza
+[host_volume spec]: /docs/configuration/client.html#host_volume-block
 [volume spec]: /docs/job-specification/volume.html
 [volume_mount spec]: /docs/job-specification/volume_mount.html
 [password-security]: https://dev.mysql.com/doc/refman/8.0/en/password-security.html

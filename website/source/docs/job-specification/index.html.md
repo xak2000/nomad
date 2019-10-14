@@ -14,7 +14,7 @@ between human readable and editable, and machine-friendly.
 
 The job specification is broken down into smaller pieces, which you will find
 expanded in the navigation menu. We recommend getting started at the [job][]
-stanza. Alternatively, you can keep reading to see a few examples.
+block. Alternatively, you can keep reading to see a few examples.
 
 For machine-friendliness, Nomad can also read JSON-equivalent configurations. In
 general, we recommend using the HCL syntax.
@@ -129,9 +129,9 @@ job "docs" {
 }
 ```
 
-Note that starting with Nomad 0.10, the `service` stanza can also be specified at the group level. This
+Note that starting with Nomad 0.10, the `service` block can also be specified at the group level. This
 allows job specification authors to create and register services with Consul Connect support. A service
-stanza specified at the group level must include a [connect][] stanza, like the following snippet.
+block specified at the group level must include a [connect][] block, like the following snippet.
 
 ```hcl
 service {
@@ -145,4 +145,4 @@ service {
 ```
 [hcl]: https://github.com/hashicorp/hcl "HashiCorp Configuration Language"
 [job]: /docs/job-specification/job.html "Nomad job Job Specification"
-[connect]: /docs/job-specification/connect.html "Connect Stanza Specification"
+[connect]: /docs/job-specification/connect.html "Connect Block Specification"

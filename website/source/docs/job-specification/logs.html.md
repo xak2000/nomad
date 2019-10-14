@@ -1,14 +1,14 @@
 ---
 layout: "docs"
-page_title: "logs Stanza - Job Specification"
+page_title: "logs Block - Job Specification"
 sidebar_current: "docs-job-specification-logs"
 description: |-
-  The "logs" stanza configures the log rotation policy for a task's stdout and
-  stderr. Logging is enabled by default with sane defaults. The "logs" stanza
+  The "logs" block configures the log rotation policy for a task's stdout and
+  stderr. Logging is enabled by default with sane defaults. The "logs" block
   allows for finer-grained control over how Nomad handles log files.
 ---
 
-# `logs` Stanza
+# `logs` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -19,10 +19,10 @@ description: |-
   </tr>
 </table>
 
-The `logs` stanza configures the log rotation policy for a task's `stdout` and
+The `logs` block configures the log rotation policy for a task's `stdout` and
 `stderr`. Logging is enabled by default with sane defaults (provided in the
 parameters section below), and there is currently no way to disable logging for
-tasks. The `logs` stanza allows for finer-grained control over how Nomad handles
+tasks. The `logs` block allows for finer-grained control over how Nomad handles
 log files.
 
 Nomad's log rotation works by writing stdout/stderr output from tasks to a file
@@ -62,8 +62,8 @@ please see the [`nomad alloc logs`][logs-command] command.
 
 ## `logs` Examples
 
-The following examples only show the `logs` stanzas. Remember that the
-`logs` stanza is only valid in the placements listed above.
+The following examples only show the `logs` blocks. Remember that the
+`logs` block is only valid in the placements listed above.
 
 ### Configure Defaults
 

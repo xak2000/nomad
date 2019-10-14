@@ -18,7 +18,7 @@ jobs are migrated off of draining nodes.
 
 ## Configuring How Jobs are Migrated
 
-In Nomad 0.8 a [`migrate`][migrate] stanza was added to jobs to allow control
+In Nomad 0.8 a [`migrate`][migrate] block was added to jobs to allow control
 over how allocations for a job are migrated off of a draining node. Below is an
 example job that runs a web service and has a Consul health check:
 
@@ -69,7 +69,7 @@ job "webapp" {
 }
 ```
 
-The above `migrate` stanza ensures only 2 allocations are stopped at a time to
+The above `migrate` block ensures only 2 allocations are stopped at a time to
 migrate during node drains. Even if multiple nodes running allocations for this
 job were draining at the same time, only 2 allocations would be migrated at a
 time.
@@ -180,7 +180,7 @@ timely fashion.
 
 Operators may specify a deadline when enabling a node drain to prevent drains
 from not finishing. Once the deadline is reached, all remaining allocations on
-the node are stopped regardless of `migrate` stanza parameters.
+the node are stopped regardless of `migrate` block parameters.
 
 The default deadline is 1 hour and may be changed with the
 [`-deadline`][deadline] command line option. The [`-force`][force] option is an

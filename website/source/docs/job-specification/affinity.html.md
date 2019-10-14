@@ -1,14 +1,14 @@
 ---
 layout: "docs"
-page_title: "affinity Stanza - Job Specification"
+page_title: "affinity Block - Job Specification"
 sidebar_current: "docs-job-specification-affinity"
 description: |-
-  The "affinity" stanza allows restricting the set of eligible nodes.
+  The "affinity" block allows restricting the set of eligible nodes.
   Affinities may filter on attributes or metadata. Additionally affinities may
   be specified at the job, group, or task levels for ultimate flexibility.
 ---
 
-# `affinity` Stanza
+# `affinity` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -23,7 +23,7 @@ description: |-
   </tr>
 </table>
 
-The `affinity` stanza allows operators to express placement preference for a set of nodes. Affinities may
+The `affinity` block allows operators to express placement preference for a set of nodes. Affinities may
 be expressed on [attributes][interpolation] or [client metadata][client-meta].
 Additionally affinities may be specified at the [job][job], [group][group], or
 [task][task] levels for ultimate flexibility.
@@ -58,7 +58,7 @@ job "docs" {
 }
 ```
 
-Affinities apply to task groups but may be specified within job and task stanzas as well.
+Affinities apply to task groups but may be specified within job and task blocks as well.
 Job affinities apply to all groups within the job. Task affinities apply to the whole task group
 that the task is a part of.
 
@@ -175,8 +175,8 @@ affinity {
 
 ## `affinity` Examples
 
-The following examples only show the `affinity` stanzas. Remember that the
-`affinity` stanza is only valid in the placements listed above.
+The following examples only show the `affinity` blocks. Remember that the
+`affinity` block is only valid in the placements listed above.
 
 ### Kernel Data
 
@@ -278,6 +278,6 @@ The placement score is affected by the following factors.
   of a job on the same node.
 - `node-reschedule-penalty` - Used when the job is being rescheduled. Nomad adds a penalty to avoid placing the job on a node where
   it has failed to run before.
-- `node-affinity` - Used when the criteria specified in the `affinity` stanza matches the node.
+- `node-affinity` - Used when the criteria specified in the `affinity` block matches the node.
 
 

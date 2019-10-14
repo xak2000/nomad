@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "task Stanza - Job Specification"
+page_title: "task Block - Job Specification"
 sidebar_current: "docs-job-specification-task"
 description: |-
-  The "task" stanza creates an individual unit of work, such as a Docker
+  The "task" block creates an individual unit of work, such as a Docker
   container, web application, or batch processing.
 ---
 
-# `task` Stanza
+# `task` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -17,7 +17,7 @@ description: |-
     </td>
   </tr>
 </table>
-The `task` stanza creates an individual unit of work, such as a Docker
+The `task` block creates an individual unit of work, such as a Docker
 container, web application, or batch processing.
 
 ```hcl
@@ -113,8 +113,8 @@ job "docs" {
 
 ## `task` Examples
 
-The following examples only show the `task` stanzas. Remember that the
-`task` stanza is only valid in the placements listed above.
+The following examples only show the `task` blocks. Remember that the
+`task` block is only valid in the placements listed above.
 
 ### Docker Container
 

@@ -1,12 +1,12 @@
 ---
 layout: "docs"
-page_title: "acl Stanza - Agent Configuration"
+page_title: "acl Block - Agent Configuration"
 sidebar_current: "docs-configuration-acl"
 description: |-
-  The "acl" stanza configures the Nomad agent to enable ACLs and tune various parameters.
+  The "acl" block configures the Nomad agent to enable ACLs and tune various parameters.
 ---
 
-# `acl` Stanza
+# `acl` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -17,7 +17,7 @@ description: |-
   </tr>
 </table>
 
-The `acl` stanza configures the Nomad agent to enable ACLs and tunes various ACL parameters.
+The `acl` block configures the Nomad agent to enable ACLs and tunes various ACL parameters.
 
 ```hcl
 acl {

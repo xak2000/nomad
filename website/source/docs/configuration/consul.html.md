@@ -1,15 +1,15 @@
 ---
 layout: "docs"
-page_title: "consul Stanza - Agent Configuration"
+page_title: "consul Block - Agent Configuration"
 sidebar_current: "docs-configuration-consul"
 description: |-
-  The "consul" stanza configures the Nomad agent's communication with
+  The "consul" block configures the Nomad agent's communication with
   Consul for service discovery and key-value integration. When
   configured, tasks can register themselves with Consul, and the Nomad cluster
   can automatically bootstrap itself.
 ---
 
-# `consul` Stanza
+# `consul` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -21,7 +21,7 @@ description: |-
 </table>
 
 
-The `consul` stanza configures the Nomad agent's communication with
+The `consul` block configures the Nomad agent's communication with
 [Consul][consul] for service discovery and key-value integration. When
 configured, tasks can register themselves with Consul, and the Nomad cluster can
 [automatically bootstrap][bootstrap] itself.
@@ -34,7 +34,7 @@ consul {
 }
 ```
 
-A default `consul` stanza is automatically merged with all Nomad agent
+A default `consul` block is automatically merged with all Nomad agent
 configurations. These sane defaults automatically enable Consul integration if
 Consul is detected on the system. This allows for seamless bootstrapping of the
 cluster with zero configuration. To put it another way: if you have a Consul

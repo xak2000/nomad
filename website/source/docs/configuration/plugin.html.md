@@ -1,12 +1,12 @@
 ---
 layout: "docs"
-page_title: "plugin Stanza - Agent Configuration"
+page_title: "plugin Block - Agent Configuration"
 sidebar_current: "docs-configuration-plugin"
 description: |-
-  The "plugin" stanza is used to configure a Nomad plugin.
+  The "plugin" block is used to configure a Nomad plugin.
 ---
 
-# `plugin` Stanza
+# `plugin` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -17,7 +17,7 @@ description: |-
   </tr>
 </table>
 
-The `plugin` stanza is used to configure plugins.
+The `plugin` block is used to configure plugins.
 
 ```hcl
 plugin "example-plugin" {

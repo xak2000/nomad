@@ -1,12 +1,12 @@
 ---
 layout: "docs"
-page_title: "restart Stanza - Job Specification"
+page_title: "restart Block - Job Specification"
 sidebar_current: "docs-job-specification-restart"
 description: |-
-  The "restart" stanza configures a group's behavior on task failure.
+  The "restart" block configures a group's behavior on task failure.
 ---
 
-# `restart` Stanza
+# `restart` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -17,7 +17,7 @@ description: |-
   </tr>
 </table>
 
-The `restart` stanza configures a group's behavior on task failure. Restarts
+The `restart` block configures a group's behavior on task failure. Restarts
 happen on the client that is running the task.
 
 ```hcl
@@ -96,4 +96,4 @@ restart {
 - `"fail"` - Instructs the scheduler to not attempt to restart the task on
   failure. This is the default behavior. This mode is useful for non-idempotent jobs which are unlikely to
   succeed after a few failures. Failed jobs will be restarted according to
-  the [`reschedule`](/docs/job-specification/reschedule.html) stanza.
+  the [`reschedule`](/docs/job-specification/reschedule.html) block.

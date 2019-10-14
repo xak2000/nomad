@@ -1,14 +1,14 @@
 ---
 layout: "docs"
-page_title: "migrate Stanza - Job Specification"
+page_title: "migrate Block - Job Specification"
 sidebar_current: "docs-job-specification-migrate"
 description: |-
-  The "migrate" stanza specifies the group's migrate strategy. The migrate
+  The "migrate" block specifies the group's migrate strategy. The migrate
   strategy is used to control the job's behavior when it is being migrated off
   of a draining node.
 ---
 
-# `migrate` Stanza
+# `migrate` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -21,11 +21,11 @@ description: |-
   </tr>
 </table>
 
-The `migrate` stanza specifies the group's strategy for migrating off of
+The `migrate` block specifies the group's strategy for migrating off of
 [draining][drain] nodes. If omitted, a default migration strategy is applied.
 If specified at the job level, the configuration will apply to all groups
 within the job. Only service jobs with a count greater than 1 support migrate
-stanzas.
+blocks.
 
 ```hcl
 job "docs" {
@@ -44,7 +44,7 @@ allocations have been healthy for their `min_healthy_time` or
 `healthy_deadline` is reached.
 
 Note that a node's drain [deadline][deadline] will override the `migrate`
-stanza for allocations on that node. The `migrate` stanza is for job authors to
+block for allocations on that node. The `migrate` block is for job authors to
 define how their services should be migrated, while the node drain deadline is
 for system operators to put hard limits on how long a drain may take.
 

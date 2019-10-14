@@ -729,7 +729,7 @@ func (c *ServiceClient) serviceRegs(ops *operations, service *structs.Service, t
 		Address: ip,
 		Port:    port,
 		Meta:    meta,
-		Connect: connect, // will be nil if no Connect stanza
+		Connect: connect, // will be nil if no Connect block
 	}
 	ops.regServices = append(ops.regServices, serviceReg)
 
@@ -1440,7 +1440,7 @@ func getAddress(addrMode, portLabel string, networks structs.Networks, driverNet
 // disable Connect for this service.
 func newConnect(serviceName string, nc *structs.ConsulConnect, networks structs.Networks) (*api.AgentServiceConnect, error) {
 	if nc == nil {
-		// No Connect stanza, returning nil is fine
+		// No Connect block, returning nil is fine
 		return nil, nil
 	}
 

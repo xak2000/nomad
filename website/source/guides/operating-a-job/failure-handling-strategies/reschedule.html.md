@@ -1,6 +1,6 @@
 ---
 layout: "guides"
-page_title: "Reschedule Stanza - Operating a Job"
+page_title: "Reschedule Block - Operating a Job"
 sidebar_current: "guides-operating-a-job-failure-handling-strategies-reschedule"
 description: |-
   Nomad can reschedule failing tasks after any local restart attempts have been
@@ -8,16 +8,16 @@ description: |-
   running the task.
 ---
 
-# Reschedule Stanza
+# Reschedule Block
 
 Tasks can sometimes fail due to network, CPU or memory issues on the node running the task. In such situations,
-Nomad can reschedule the task on another node. The [`reschedule` stanza][reschedule] can be used to configure how
+Nomad can reschedule the task on another node. The [`reschedule` block][reschedule] can be used to configure how
 Nomad should try placing failed tasks on another node in the cluster. Reschedule attempts have a delay between
 each attempt, and the delay can be configured to increase between each rescheduling attempt according to a configurable
-`delay_function`. See the [`reschedule` stanza][reschedule] for more information.
+`delay_function`. See the [`reschedule` block][reschedule] for more information.
 
 Service jobs are configured by default to have unlimited reschedule attempts. We recommend using the reschedule
-stanza to ensure that failed tasks are automatically reattempted on another node without needing operator intervention.
+block to ensure that failed tasks are automatically reattempted on another node without needing operator intervention.
 
 # Example
 The following CLI example shows job and allocation statuses for a task being rescheduled by Nomad.
@@ -89,4 +89,4 @@ Time                       Type            Description
 
 ```
 
-[reschedule]: /docs/job-specification/reschedule.html "Nomad reschedule Stanza"
+[reschedule]: /docs/job-specification/reschedule.html "Nomad reschedule Block"

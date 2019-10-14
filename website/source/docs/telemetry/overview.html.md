@@ -14,7 +14,7 @@ related to the performance of the system. On the server side, leaders and
 followers have metrics in common as well as metrics that are specific to their
 roles. Clients have separate metrics for the host metrics and for
 allocations/tasks, both of which have to be [explicitly
-enabled][telemetry-stanza]. There are also runtime metrics that are common to
+enabled][telemetry-block]. There are also runtime metrics that are common to
 all servers and clients.
 
 By default, the Nomad agent collects telemetry data at a [1 second
@@ -159,4 +159,4 @@ in particular.
 [statsd-telem]: /docs/configuration/telemetry.html#statsd
 [statsite-telem]: /docs/configuration/telemetry.html#statsite
 [tagged-metrics]: /docs/telemetry/metrics.html#tagged-metrics
-[telemetry-stanza]: /docs/configuration/telemetry.html
+[telemetry-block]: /docs/configuration/telemetry.html

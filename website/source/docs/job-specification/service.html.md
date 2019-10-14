@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "service Stanza - Job Specification"
+page_title: "service Block - Job Specification"
 sidebar_current: "docs-job-specification-service"
 description: |-
-  The "service" stanza instructs Nomad to register the task as a service using
+  The "service" block instructs Nomad to register the task as a service using
   the service discovery integration.
 ---
 
-# `service` Stanza
+# `service` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -23,7 +23,7 @@ description: |-
   </tr>
 </table>
 
-The `service` stanza instructs Nomad to register a service with Consul. This
+The `service` block instructs Nomad to register a service with Consul. This
 section of the documentation will discuss the configuration, but please also
 read the [Nomad service discovery documentation][service-discovery] for more
 detailed information about the integration.
@@ -68,11 +68,11 @@ job "docs" {
 }
 ```
 
-This section of the documentation only cover the job file fields and stanzas
+This section of the documentation only cover the job file fields and blocks
 for service discovery. For more details on using Nomad with Consul please see
 the [Consul integration documentation][service-discovery].
 
-Nomad 0.10 also allows specifying the `service` stanza at the task group level.
+Nomad 0.10 also allows specifying the `service` block at the task group level.
 This enables services in the same task group to opt into [Consul Connect][] integration.
 
 ## `service` Parameters
@@ -114,7 +114,7 @@ This enables services in the same task group to opt into [Consul Connect][] inte
     `port_map`.
 
   - `host` - Advertise the host port for this service. `port` must match a port
-    _label_ specified in the [`network`][network] stanza.
+    _label_ specified in the [`network`][network] block.
 
 - `tags` `(array<string>: [])` - Specifies the list of tags to associate with
   this service. If this is not supplied, no tags will be assigned to the service
@@ -164,7 +164,7 @@ scripts.
 - `args` `(array<string>: [])` - Specifies additional arguments to the
   `command`. This only applies to script-based health checks.
 
-- `check_restart` - See [`check_restart` stanza][check_restart_stanza].
+- `check_restart` - See [`check_restart` block][check_restart_block].
 
 - `command` `(string: <varies>)` - Specifies the command to run for performing
   the health check. The script must exit: 0 for passing, 1 for warning, or any
@@ -206,7 +206,7 @@ scripts.
 - `port` `(string: <varies>)` - Specifies the label of the port on which the
   check will be performed. Note this is the _label_ of the port and not the port
   number unless `address_mode = driver`. The port label must match one defined
-  in the [`network`][network] stanza. If a port value was declared on the
+  in the [`network`][network] block. If a port value was declared on the
   `service`, this will inherit from that value if not supplied. If supplied,
   this value takes precedence over the `service.port` value. This is useful for
   services which operate on multiple ports. `grpc`, `http`, and `tcp` checks
@@ -219,7 +219,7 @@ scripts.
 
 - `task` `(string: <required>)` - Specifies the task associated with this
   check. Scripts are executed within the task's environment, and
-  `check_restart` stanzas will apply to the specified task. For `checks` on group
+  `check_restart` blocks will apply to the specified task. For `checks` on group
   level `services` only.
 
 - `timeout` `(string: <required>)` - Specifies how long Consul will wait for a
@@ -233,10 +233,10 @@ scripts.
 - `tls_skip_verify` `(bool: false)` - Skip verifying TLS certificates for HTTPS
   checks. Requires Consul >= 0.7.2.
 
-#### `header` Stanza
+#### `header` Block
 
-HTTP checks may include a `header` stanza to set HTTP headers. The `header`
-stanza parameters have lists of strings as values. Multiple values will cause
+HTTP checks may include a `header` block to set HTTP headers. The `header`
+block parameters have lists of strings as values. Multiple values will cause
 the header to be set multiple times, once for each value.
 
 ```hcl
@@ -258,8 +258,8 @@ service {
 
 ## `service` Examples
 
-The following examples only show the `service` stanzas. Remember that the
-`service` stanza is only valid in the placements listed above.
+The following examples only show the `service` blocks. Remember that the
+`service` block is only valid in the placements listed above.
 
 ### Basic Service
 
@@ -272,7 +272,7 @@ service {
 }
 ```
 
-This example must be accompanied by a [`network`][network] stanza which defines
+This example must be accompanied by a [`network`][network] block which defines
 a static or dynamic port labeled "lb". For example:
 
 ```hcl
@@ -400,7 +400,7 @@ service {
 ```
 
 In this example Consul would health check the `example.Service` service on the
-`rpc` port defined in the task's [network resources][network] stanza.  See
+`rpc` port defined in the task's [network resources][network] block.  See
 [Using Driver Address Mode](#using-driver-address-mode) for details on address
 selection.
 
@@ -408,7 +408,7 @@ selection.
 
 The [Docker](/docs/drivers/docker.html#network_mode) and
 [rkt](/docs/drivers/rkt.html#net) drivers support the `driver` setting for the
-`address_mode` parameter in both `service` and `check` stanzas. The driver
+`address_mode` parameter in both `service` and `check` blocks. The driver
 address mode allows advertising and health checking the IP and port assigned to
 a task by the driver. This way if you're using a network plugin like Weave with
 Docker, you can advertise the Weave address in Consul instead of the host's
@@ -466,10 +466,10 @@ driver's address (in this case Weave's). The service will advertise the
 container's port: 6379.
 
 However since Consul is often run on the host without access to the Weave
-network, `check` stanzas default to `host` address mode. The TCP check will run
+network, `check` blocks default to `host` address mode. The TCP check will run
 against the host's IP and the dynamic host port assigned by Nomad.
 
-Note that the `check` still inherits the `service` stanza's `db` port label,
+Note that the `check` still inherits the `service` block's `db` port label,
 but each will resolve the port label according to their address mode.
 
 If Consul has access to the Weave network the job could be configured like
@@ -517,7 +517,7 @@ job "example" {
 ```
 
 In this case Nomad doesn't need to assign Redis any host ports. The `service`
-and `check` stanzas can both specify the port number to advertise and check
+and `check` blocks can both specify the port number to advertise and check
 directly since Nomad isn't managing any port assignments.
 
 ### IPv6 Docker containers
@@ -532,7 +532,7 @@ Unlike services, checks do not have an `auto` address mode as there's no way
 for Nomad to know which is the best address to use for checks. Consul needs
 access to the address for any HTTP or TCP checks.
 
-So you have to set `address_mode` parameter in the `check` stanza to `driver`. 
+So you have to set `address_mode` parameter in the `check` block to `driver`. 
 
 For example using `auto` address mode:
 
@@ -620,7 +620,7 @@ job "example" {
 }
 ```
 
-The `service` and `check` stanzas can both specify the port number to 
+The `service` and `check` blocks can both specify the port number to 
 advertise and check directly since Nomad isn't managing any port assignments.
 
 - - -
@@ -629,11 +629,11 @@ advertise and check directly since Nomad isn't managing any port assignments.
 [qemu driver][qemu] since the Nomad client does not have access to the file
 system of a task for that driver.</small>
 
-[check_restart_stanza]: /docs/job-specification/check_restart.html "check_restart stanza"
+[check_restart_block]: /docs/job-specification/check_restart.html "check_restart block"
 [consul_grpc]: https://www.consul.io/api/agent/check.html#grpc
 [service-discovery]: /guides/integrations/consul-integration/index.html#service-discovery/index.html "Nomad Service Discovery"
 [interpolation]: /docs/runtime/interpolation.html "Nomad Runtime Interpolation"
 [network]: /docs/job-specification/network.html "Nomad network Job Specification"
 [qemu]: /docs/drivers/qemu.html "Nomad qemu Driver"
-[restart_stanza]: /docs/job-specification/restart.html "restart stanza"
+[restart_block]: /docs/job-specification/restart.html "restart block"
 [Connect]: /docs/job-specification/connect.html "Nomad Consul Connect Integration"

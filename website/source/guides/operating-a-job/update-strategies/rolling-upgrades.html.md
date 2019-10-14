@@ -13,20 +13,20 @@ description: |-
 
 Nomad supports rolling updates as a first class feature. To enable rolling
 updates a job or task group is annotated with a high-level description of the
-update strategy using the [`update` stanza][update]. Under the hood, Nomad
+update strategy using the [`update` block][update]. Under the hood, Nomad
 handles limiting parallelism, interfacing with Consul to determine service
 health and even automatically reverting to an older, healthy job when a
 deployment fails.
 
 ## Enabling Rolling Updates
 
-Rolling updates are enabled by adding the [`update` stanza][update] to the job
-specification. The `update` stanza may be placed at the job level or in an
+Rolling updates are enabled by adding the [`update` block][update] to the job
+specification. The `update` block may be placed at the job level or in an
 individual task group. When placed at the job level, the update strategy is
 inherited by all task groups in the job. When placed at both the job and group
-level, the `update` stanzas are merged, with group stanzas taking precedence
-over job level stanzas. See the [`update` stanza
-documentation](/docs/job-specification/update.html#upgrade-stanza-inheritance)
+level, the `update` blocks are merged, with group blocks taking precedence
+over job level blocks. See the [`update` block
+documentation](/docs/job-specification/update.html#upgrade-block-inheritance)
 for an example.
 
 ```hcl
@@ -36,7 +36,7 @@ job "geo-api-server" {
   group "api-server" {
     count = 6
 
-    # Add an update stanza to enable rolling updates of the service
+    # Add an update block to enable rolling updates of the service
     update {
       max_parallel = 2
       min_healthy_time = "30s"
@@ -56,7 +56,7 @@ job "geo-api-server" {
 }
 ```
 
-In this example, by adding the simple `update` stanza to the "api-server" task
+In this example, by adding the simple `update` block to the "api-server" task
 group, we inform Nomad that updates to the group should be handled with a
 rolling update strategy.
 
@@ -231,7 +231,7 @@ on deployment failure. Nomad keeps a history of submitted jobs and whether the
 job version was stable.  A job is considered stable if all its allocations are
 healthy.
 
-To enable this we simply add the `auto_revert` parameter to the `update` stanza:
+To enable this we simply add the `auto_revert` parameter to the `update` block:
 
 ```
 update {
@@ -322,4 +322,4 @@ image is marked as unstable. This is because the placed allocations failed to
 start. Nomad detected the deployment failed and as such, created job Version 3
 that reverted back to the last healthy job.
 
-[update]: /docs/job-specification/update.html "Nomad update Stanza"
+[update]: /docs/job-specification/update.html "Nomad update Block"

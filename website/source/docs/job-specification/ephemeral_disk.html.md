@@ -1,14 +1,14 @@
 ---
 layout: "docs"
-page_title: "ephemeral_disk Stanza - Job Specification"
+page_title: "ephemeral_disk Block - Job Specification"
 sidebar_current: "docs-job-specification-ephemeral_disk"
 description: |-
-  The "ephemeral_disk" stanza describes the ephemeral disk requirements of the
+  The "ephemeral_disk" block describes the ephemeral disk requirements of the
   group. Ephemeral disks can be marked as sticky and support live data
   migrations.
 ---
 
-# `ephemeral_disk` Stanza
+# `ephemeral_disk` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -20,7 +20,7 @@ description: |-
 </table>
 
 
-The `ephemeral_disk` stanza describes the ephemeral disk requirements of the
+The `ephemeral_disk` block describes the ephemeral disk requirements of the
 group. Ephemeral disks can be marked as sticky and support live data migrations.
 All tasks in this group will share the same ephemeral disk.
 
@@ -55,8 +55,8 @@ job "docs" {
 
 ## `ephemeral_disk` Examples
 
-The following examples only show the `ephemeral_disk` stanzas. Remember that the
-`ephemeral_disk` stanza is only valid in the placements listed above.
+The following examples only show the `ephemeral_disk` blocks. Remember that the
+`ephemeral_disk` block is only valid in the placements listed above.
 
 ### Sticky Volumes
 

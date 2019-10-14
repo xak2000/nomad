@@ -1,12 +1,12 @@
 ---
 layout: "docs"
-page_title: "meta Stanza - Job Specification"
+page_title: "meta Block - Job Specification"
 sidebar_current: "docs-job-specification-meta"
 description: |-
-  The "meta" stanza allows for user-defined arbitrary key-value pairs.
+  The "meta" block allows for user-defined arbitrary key-value pairs.
 ---
 
-# `meta` Stanza
+# `meta` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -21,8 +21,8 @@ description: |-
   </tr>
 </table>
 
-The `meta` stanza allows for user-defined arbitrary key-value pairs. It is
-possible to use the `meta` stanza at the [job][], [group][], or [task][] level.
+The `meta` block allows for user-defined arbitrary key-value pairs. It is
+possible to use the `meta` block at the [job][], [group][], or [task][] level.
 
 ```hcl
 job "docs" {
@@ -50,14 +50,14 @@ group layer applies to all tasks within that group.
 
 ## `meta` Parameters
 
-The "parameters" for the `meta` stanza can be any key-value. The keys and values
+The "parameters" for the `meta` block can be any key-value. The keys and values
 are both of type `string`, but they can be specified as other types. They will
 automatically be converted to strings.
 
 ## `meta` Examples
 
-The following examples only show the `meta` stanzas. Remember that the
-`meta` stanza is only valid in the placements listed above.
+The following examples only show the `meta` blocks. Remember that the
+`meta` block is only valid in the placements listed above.
 
 ### Coercion
 

@@ -153,7 +153,7 @@ of a job from the Run Job screen. Always review the plan output!
 
 ## Monitoring a Deployment
 
-When a system or service job includes the [`update` stanza](/docs/job-specification/update.html), a
+When a system or service job includes the [`update` block](/docs/job-specification/update.html), a
 deployment is created upon job submission. Job deployments can be monitored in realtime from the Web
 UI.
 

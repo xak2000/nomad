@@ -129,7 +129,7 @@ func TestJob_Warnings(t *testing.T) {
 		Expected []string
 	}{
 		{
-			Name:     "Higher counts for update stanza",
+			Name:     "Higher counts for update block",
 			Expected: []string{"max parallel count is greater"},
 			Job: &Job{
 				Type: JobTypeService,
@@ -434,7 +434,7 @@ func TestJob_SystemJob_Validate(t *testing.T) {
 	}}
 	err = j.Validate()
 	require.NotNil(t, err)
-	require.Contains(t, err.Error(), "System jobs may not have an affinity stanza")
+	require.Contains(t, err.Error(), "System jobs may not have an affinity block")
 
 	// Add spread at job and task group level, that should fail validation
 	j.Spreads = []*Spread{{
@@ -448,7 +448,7 @@ func TestJob_SystemJob_Validate(t *testing.T) {
 
 	err = j.Validate()
 	require.NotNil(t, err)
-	require.Contains(t, err.Error(), "System jobs may not have a spread stanza")
+	require.Contains(t, err.Error(), "System jobs may not have a spread block")
 
 }
 
@@ -1582,7 +1582,7 @@ func TestTask_Validate_ConnectProxyKind(t *testing.T) {
 			Service: &Service{
 				Name: "redis",
 			},
-			ErrContains: "Connect proxy task must not have a service stanza",
+			ErrContains: "Connect proxy task must not have a service block",
 		},
 		{
 			Desc:   "Leader should not be set",
@@ -1607,7 +1607,7 @@ func TestTask_Validate_ConnectProxyKind(t *testing.T) {
 			ErrContains: "Connect proxy service name not found in services from task group",
 		},
 		{
-			Desc: "Connect stanza not configured in group",
+			Desc: "Connect block not configured in group",
 			Kind: "connect-proxy:redis",
 			TgService: []*Service{{
 				Name: "redis",
@@ -4636,7 +4636,7 @@ func TestSpread_Validate(t *testing.T) {
 				Attribute: "${node.datacenter}",
 				Weight:    -1,
 			},
-			err:  fmt.Errorf("Spread stanza must have a positive weight from 0 to 100"),
+			err:  fmt.Errorf("Spread block must have a positive weight from 0 to 100"),
 			name: "Invalid weight",
 		},
 		{
@@ -4644,7 +4644,7 @@ func TestSpread_Validate(t *testing.T) {
 				Attribute: "${node.datacenter}",
 				Weight:    110,
 			},
-			err:  fmt.Errorf("Spread stanza must have a positive weight from 0 to 100"),
+			err:  fmt.Errorf("Spread block must have a positive weight from 0 to 100"),
 			name: "Invalid weight",
 		},
 		{

@@ -133,7 +133,7 @@ func (s *Service) Canonicalize(t *Task, tg *TaskGroup, job *Job) {
 	}
 }
 
-// ConsulConnect represents a Consul Connect jobspec stanza.
+// ConsulConnect represents a Consul Connect jobspec block.
 type ConsulConnect struct {
 	Native         bool
 	SidecarService *ConsulSidecarService `mapstructure:"sidecar_service"`
@@ -141,7 +141,7 @@ type ConsulConnect struct {
 }
 
 // ConsulSidecarService represents a Consul Connect SidecarService jobspec
-// stanza.
+// block.
 type ConsulSidecarService struct {
 	Port  string
 	Proxy *ConsulProxy
@@ -163,7 +163,7 @@ type SidecarTask struct {
 	KillSignal    string         `mapstructure:"kill_signal"`
 }
 
-// ConsulProxy represents a Consul Connect sidecar proxy jobspec stanza.
+// ConsulProxy represents a Consul Connect sidecar proxy jobspec block.
 type ConsulProxy struct {
 	LocalServiceAddress string `mapstructure:"local_service_address"`
 	LocalServicePort    int    `mapstructure:"local_service_port"`
@@ -171,7 +171,7 @@ type ConsulProxy struct {
 	Config              map[string]interface{}
 }
 
-// ConsulUpstream represents a Consul Connect upstream jobspec stanza.
+// ConsulUpstream represents a Consul Connect upstream jobspec block.
 type ConsulUpstream struct {
 	DestinationName string `mapstructure:"destination_name"`
 	LocalBindPort   int    `mapstructure:"local_bind_port"`

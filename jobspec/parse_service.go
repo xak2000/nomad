@@ -97,7 +97,7 @@ func parseService(o *ast.ObjectItem) (*api.Service, error) {
 	// Filter connect
 	if co := listVal.Filter("connect"); len(co.Items) > 0 {
 		if len(co.Items) > 1 {
-			return nil, fmt.Errorf("connect '%s': cannot have more than 1 connect stanza", service.Name)
+			return nil, fmt.Errorf("connect '%s': cannot have more than 1 connect block", service.Name)
 		}
 
 		c, err := parseConnect(co.Items[0])
@@ -436,7 +436,7 @@ func parseChecks(service *api.Service, checkObjs *ast.ObjectList) error {
 			return err
 		}
 
-		// HCL allows repeating stanzas so merge 'header' into a single
+		// HCL allows repeating blocks so merge 'header' into a single
 		// map[string][]string.
 		if headerI, ok := cm["header"]; ok {
 			headerRaw, ok := headerI.([]map[string]interface{})

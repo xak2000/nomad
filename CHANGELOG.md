@@ -17,7 +17,7 @@ IMPROVEMENTS:
  * agent: Added `log_level` to be reloaded on SIGHUP [[GH-5996](https://github.com/hashicorp/nomad/pull/5996)]
  * api: Added follow parameter to file streaming endpoint to support older browsers [[GH-6049](https://github.com/hashicorp/nomad/issues/6049)]
  * client: Upgraded `go-getter` to support GCP links [[GH-6215](https://github.com/hashicorp/nomad/pull/6215)]
- * client: Remove consul service stanza from `job init --short` jobspec [[GH-6179](https://github.com/hashicorp/nomad/issues/6179)]
+ * client: Remove consul service block from `job init --short` jobspec [[GH-6179](https://github.com/hashicorp/nomad/issues/6179)]
  * drivers: Exposed namespace as `NOMAD_NAMESPACE` environment variable in running tasks [[GH-6192](https://github.com/hashicorp/nomad/pull/6192)]
  * metrics: Added job status (pending, running, dead) metrics [[GH-6003](https://github.com/hashicorp/nomad/issues/6003)]
  * metrics: Added status and scheduling ability to client metrics [[GH-6130](https://github.com/hashicorp/nomad/issues/6130)]
@@ -127,7 +127,7 @@ BUG FIXES:
  * core: Update node's `StatusUpdatedAt` when node drain or eligibility changes [[GH-5746](https://github.com/hashicorp/nomad/issues/5746)]
  * core: Fixed a panic that may occur when preempting jobs for network resources [[GH-5794](https://github.com/hashicorp/nomad/issues/5794)]
  * core: Fixed a config parsing issue when client metadata contains a boolean value [[GH-5802](https://github.com/hashicorp/nomad/issues/5802)]
- * core: Fixed a config parsing issue where consul, vault, and autopilot stanzas break when using a config directory [[GH-5817](https://github.com/hashicorp/nomad/issues/5817)]
+ * core: Fixed a config parsing issue where consul, vault, and autopilot blocks break when using a config directory [[GH-5817](https://github.com/hashicorp/nomad/issues/5817)]
  * api: Allow sumitting alloc restart requests with an empty body [[GH-5823](https://github.com/hashicorp/nomad/pull/5823)]
  * client: Fixed an issue where task restart attempts is not honored properly [[GH-5737](https://github.com/hashicorp/nomad/issues/5737)]
  * client: Fixed a panic that occurs when a 0.9.2 client is running with 0.8 nomad servers [[GH-5812](https://github.com/hashicorp/nomad/issues/5812)]
@@ -239,13 +239,13 @@ __BACKWARDS INCOMPATIBILITIES:__
    jobs.
  * core: Allow the != constraint to match against keys that do not exist [[GH-4875](https://github.com/hashicorp/nomad/pull/4875)]
  * client: Task config validation is more strict in 0.9. For example unknown
-   parameters in stanzas under the task config were ignored in previous
+   parameters in blocks under the task config were ignored in previous
    versions but in 0.9 this will cause a task failure.
  * client: Task config interpolation requires names to be valid identifiers
    (`node.region` or `NOMAD_DC`). Interpolating other variables requires a new
    indexing syntax: `env[".invalid.identifier."]`. [[GH-4843](https://github.com/hashicorp/nomad/issues/4843)]
  * client: Node metadata variables must have valid identifiers, whether
-   specified in the config file (`client.meta` stanza) or on the command line
+   specified in the config file (`client.meta` block) or on the command line
    (`-meta`). [[GH-5158](https://github.com/hashicorp/nomad/pull/5158)]
  * driver/lxc: The LXC driver is no longer packaged with Nomad and is instead
    distributed separately as a driver plugin. Further, the LXC driver codebase
@@ -259,7 +259,7 @@ FEATURES:
  * **Affinities and Spread**: Jobs may now specify affinities towards certain
    node attributes. Affinities act as soft constraints, and inform the
    scheduler that the job has a preference for certain node properties. The new
-   spread stanza informs the scheduler that allocations should be spread across a
+   spread block informs the scheduler that allocations should be spread across a
    specific property such as datacenter or availability zone. This is useful to
    increase failure tolerance of critical applications.
  * **System Job Preemption**: System jobs may now preempt lower priority
@@ -547,16 +547,16 @@ __BACKWARDS INCOMPATIBILITIES:__
    that absolute URLs are not allowed, but it was not enforced. Absolute URLs
    in HTTP check paths will now fail to validate. [[GH-3685](https://github.com/hashicorp/nomad/issues/3685)]
  * drain: Draining a node no longer stops all allocations immediately: a new
-   [migrate stanza](https://www.nomadproject.io/docs/job-specification/migrate.html)
+   [migrate block](https://www.nomadproject.io/docs/job-specification/migrate.html)
    allows jobs to specify how quickly task groups can be drained. A `-force`
    option can be used to emulate the old drain behavior.
  * jobspec: The default values for restart policy have changed. Restart policy
    mode defaults to "fail" and the attempts/time interval values have been
    changed to enable faster server side rescheduling. See [restart
-   stanza](https://www.nomadproject.io/docs/job-specification/restart.html) for
+   block](https://www.nomadproject.io/docs/job-specification/restart.html) for
    more information.
  * jobspec: Removed compatibility code that migrated pre Nomad 0.6.0 Update
-   stanza syntax. All job spec files should be using update stanza fields
+   block syntax. All job spec files should be using update block fields
    introduced in 0.7.0
    [[GH-3979](https://github.com/hashicorp/nomad/pull/3979/files)]
 
@@ -567,14 +567,14 @@ IMPROVEMENTS:
  * core: Node events are emitted for events such as node registration and
    heartbeating [[GH-3945](https://github.com/hashicorp/nomad/issues/3945)]
  * core: A set of features (Autopilot) has been added to allow for automatic operator-friendly management of Nomad servers. For more information about Autopilot, see the [Autopilot Guide](https://www.nomadproject.io/guides/cluster/autopilot.html). [[GH-3670](https://github.com/hashicorp/nomad/pull/3670)]
- * core: Failed tasks are automatically rescheduled according to user specified criteria. For more information on configuration, see the [Reshedule Stanza](https://www.nomadproject.io/docs/job-specification/reschedule.html) [[GH-3981](https://github.com/hashicorp/nomad/issues/3981)]
+ * core: Failed tasks are automatically rescheduled according to user specified criteria. For more information on configuration, see the [Reshedule Block](https://www.nomadproject.io/docs/job-specification/reschedule.html) [[GH-3981](https://github.com/hashicorp/nomad/issues/3981)]
  * core: Servers can now service client HTTP endpoints [[GH-3892](https://github.com/hashicorp/nomad/issues/3892)]
  * core: Servers can now retry connecting to Vault to verify tokens without requiring a SIGHUP to do so [[GH-3957](https://github.com/hashicorp/nomad/issues/3957)]
  * core: Updated yamux library to pick up memory and CPU performance improvements [[GH-3980](https://github.com/hashicorp/nomad/issues/3980)]
- * core: Client stanza now supports overriding total memory [[GH-4052](https://github.com/hashicorp/nomad/issues/4052)]
+ * core: Client block now supports overriding total memory [[GH-4052](https://github.com/hashicorp/nomad/issues/4052)]
  * core: Node draining is now able to migrate allocations in a controlled
    manner with parameters specified by the drain command and in job files using
-   the migrate stanza [[GH-4010](https://github.com/hashicorp/nomad/issues/4010)]
+   the migrate block [[GH-4010](https://github.com/hashicorp/nomad/issues/4010)]
  * acl: Increase token name limit from 64 characters to 256 [[GH-3888](https://github.com/hashicorp/nomad/issues/3888)]
  * cli: Node status and filesystem related commands do not require direct
    network access to the Nomad client nodes [[GH-3892](https://github.com/hashicorp/nomad/issues/3892)]
@@ -587,7 +587,7 @@ IMPROVEMENTS:
  * client: Improved handling of failed RPCs and heartbeat retry logic [[GH-4106](https://github.com/hashicorp/nomad/issues/4106)]
  * client: Refactor client fingerprint methods to a request/response format [[GH-3781](https://github.com/hashicorp/nomad/issues/3781)]
  * client: Enable periodic health checks for drivers. Initial support only includes the Docker driver. [[GH-3856](https://github.com/hashicorp/nomad/issues/3856)]
- * discovery: Allow `check_restart` to be specified in the `service` stanza
+ * discovery: Allow `check_restart` to be specified in the `service` block
    [[GH-3718](https://github.com/hashicorp/nomad/issues/3718)]
  * discovery: Allow configuring names of Nomad client and server health checks
    [[GH-4003](https://github.com/hashicorp/nomad/issues/4003)]
@@ -647,8 +647,8 @@ __BACKWARDS INCOMPATIBILITIES:__
  * client: The format of service IDs in Consul has changed. If you rely upon
    Nomad's service IDs (*not* service names; those are stable), you will need
    to update your code.  [[GH-3632](https://github.com/hashicorp/nomad/issues/3632)]
- * config: Nomad no longer parses Atlas configuration stanzas. Atlas has been
-   deprecated since earlier this year. If you have an Atlas stanza in your
+ * config: Nomad no longer parses Atlas configuration blocks. Atlas has been
+   deprecated since earlier this year. If you have an Atlas block in your
    config file it will have to be removed.
  * config: Default minimum CPU configuration has been changed to 100 from 20. Jobs
    using the old minimum value of 20 will have to be updated.
@@ -793,7 +793,7 @@ BUG FIXES:
 BUG FIXES:
  * api: Search handles prefix longer than allowed UUIDs [[GH-3138](https://github.com/hashicorp/nomad/issues/3138)]
  * api: Search endpoint handles even UUID prefixes with hyphens [[GH-3120](https://github.com/hashicorp/nomad/issues/3120)]
- * api: Don't merge empty update stanza from job into task groups [[GH-3139](https://github.com/hashicorp/nomad/issues/3139)]
+ * api: Don't merge empty update block from job into task groups [[GH-3139](https://github.com/hashicorp/nomad/issues/3139)]
  * cli: Sort task groups when displaying a deployment [[GH-3137](https://github.com/hashicorp/nomad/issues/3137)]
  * cli: Handle reading files that are in a symlinked directory [[GH-3164](https://github.com/hashicorp/nomad/issues/3164)]
  * cli: All status commands handle even UUID prefixes with hyphens [[GH-3122](https://github.com/hashicorp/nomad/issues/3122)]
@@ -825,9 +825,9 @@ BUG FIXES:
 ## 0.6.1 (August 28, 2017)
 
 __BACKWARDS INCOMPATIBILITIES:__
- * deployment: Specifying an update stanza with a max_parallel of zero is now
-   a validation error. Please update the stanza to be greater than zero or
-   remove the stanza as a zero parallelism update is not valid.
+ * deployment: Specifying an update block with a max_parallel of zero is now
+   a validation error. Please update the block to be greater than zero or
+   remove the block as a zero parallelism update is not valid.
 
 IMPROVEMENTS:
  * core: Lost allocations replaced even if part of failed deployment [[GH-2961](https://github.com/hashicorp/nomad/issues/2961)]

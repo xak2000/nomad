@@ -434,7 +434,7 @@ func (n *nomadFSM) applyUpsertJob(buf []byte, index uint64) interface{} {
 	 *   un-intended destructive updates in scheduler since we use
 	 *   reflect.DeepEqual. Starting Nomad 0.4.1, job submission sanitizes
 	 *   the incoming job.
-	 * - Migrate from old style upgrade stanza that used only a stagger.
+	 * - Migrate from old style upgrade block that used only a stagger.
 	 */
 	req.Job.Canonicalize()
 
@@ -1142,7 +1142,7 @@ func (n *nomadFSM) Restore(old io.ReadCloser) error {
 			 *   un-intended destructive updates in scheduler since we use
 			 *   reflect.DeepEqual. Starting Nomad 0.4.1, job submission sanitizes
 			 *   the incoming job.
-			 * - Migrate from old style upgrade stanza that used only a stagger.
+			 * - Migrate from old style upgrade block that used only a stagger.
 			 */
 			job.Canonicalize()
 

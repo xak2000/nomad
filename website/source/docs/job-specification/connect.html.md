@@ -1,12 +1,12 @@
 ---
 layout: "docs"
-page_title: "connect Stanza - Job Specification"
+page_title: "connect Block - Job Specification"
 sidebar_current: "docs-job-specification-connect"
 description: |-
-  The "connect" stanza allows specifying options for Consul Connect integration
+  The "connect" block allows specifying options for Consul Connect integration
 ---
 
-# `connect` Stanza
+# `connect` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -17,7 +17,7 @@ description: |-
   </tr>
 </table>
 
-The `connect` stanza allows configuring various options for
+The `connect` block allows configuring various options for
 [Consul Connect](/guides/integrations/consul-connect/index.html). It is
 valid only within the context of a service definition at the task group
 level.
@@ -59,7 +59,7 @@ level.
 
 ## `connect` Examples
 
-The following example is a minimal connect stanza with defaults and is
+The following example is a minimal connect block with defaults and is
 sufficient to start an Envoy proxy sidecar for allowing incoming connections
 via Consul Connect.
 

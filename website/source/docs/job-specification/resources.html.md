@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "resources Stanza - Job Specification"
+page_title: "resources Block - Job Specification"
 sidebar_current: "docs-job-specification-resources"
 description: |-
-  The "resources" stanza describes the requirements a task needs to execute.
+  The "resources" block describes the requirements a task needs to execute.
   Resource requirements include memory, network, cpu, and more.
 ---
 
-# `resources` Stanza
+# `resources` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -18,7 +18,7 @@ description: |-
   </tr>
 </table>
 
-The `resources` stanza describes the requirements a task needs to execute.
+The `resources` block describes the requirements a task needs to execute.
 Resource requirements include memory, network, CPU, and more.
 
 ```hcl
@@ -60,8 +60,8 @@ job "docs" {
 
 ## `resources` Examples
 
-The following examples only show the `resources` stanzas. Remember that the
-`resources` stanza is only valid in the placements listed above.
+The following examples only show the `resources` blocks. Remember that the
+`resources` block is only valid in the placements listed above.
 
 ### Memory
 
@@ -76,7 +76,7 @@ resources {
 
 ### Network
 
-This example shows network constraints as specified in the [network][] stanza
+This example shows network constraints as specified in the [network][] block
 which require 1 Gbit of bandwidth, dynamically allocates two ports, and
 statically allocates one port:
 
@@ -95,7 +95,7 @@ resources {
 
 ### Devices
 
-This example shows a device constraints as specified in the [device][] stanza
+This example shows a device constraints as specified in the [device][] block
 which require two nvidia GPUs to be made available:
 
 ```hcl

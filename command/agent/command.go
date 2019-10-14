@@ -1070,7 +1070,7 @@ func (c *Command) startupJoin(config *Config) error {
 		new = len(config.Server.ServerJoin.StartJoin)
 	}
 	if old != 0 && new != 0 {
-		return fmt.Errorf("server_join and start_join cannot both be defined; prefer setting the server_join stanza")
+		return fmt.Errorf("server_join and start_join cannot both be defined; prefer setting the server_join block")
 	}
 
 	// Nothing to do

@@ -1,13 +1,13 @@
 ---
 layout: "docs"
-page_title: "dispatch_payload Stanza - Job Specification"
+page_title: "dispatch_payload Block - Job Specification"
 sidebar_current: "docs-job-specification-dispatch-payload"
 description: |-
-  The "dispatch_payload" stanza allows a task to access dispatch payloads.
+  The "dispatch_payload" block allows a task to access dispatch payloads.
   to
 ---
 
-# `dispatch_payload` Stanza
+# `dispatch_payload` Block
 
 <table class="table table-bordered table-striped">
   <tr>
@@ -18,9 +18,9 @@ description: |-
   </tr>
 </table>
 
-The `dispatch_payload` stanza is used in conjunction with a [`parameterized`][parameterized] job
+The `dispatch_payload` block is used in conjunction with a [`parameterized`][parameterized] job
 that expects a payload. When the job is dispatched with a payload, the payload
-will be made available to any task that has a `dispatch_payload` stanza. The
+will be made available to any task that has a `dispatch_payload` block. The
 payload will be written to the configured file before the task is started. This
 allows the task to use the payload as input or configuration.
 
@@ -44,8 +44,8 @@ job "docs" {
 
 ## `dispatch_payload` Examples
 
-The following examples only show the `dispatch_payload` stanzas. Remember that the
-`dispatch_payload` stanza is only valid in the placements listed above.
+The following examples only show the `dispatch_payload` blocks. Remember that the
+`dispatch_payload` block is only valid in the placements listed above.
 
 ### Write Payload to a File
 

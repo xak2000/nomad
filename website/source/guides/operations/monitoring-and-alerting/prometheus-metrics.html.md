@@ -16,7 +16,7 @@ a Nomad cluster and Prometheus [Alertmanager][alertmanager]. While this guide in
 ## Reference Material
 
 - [Configuring Prometheus][configuring prometheus]
-- [Telemetry Stanza in Nomad Agent Configuration][telemetry stanza]
+- [Telemetry Block in Nomad Agent Configuration][telemetry block]
 - [Alerting Overview][alerting]
 
 ## Estimated Time to Complete
@@ -57,7 +57,7 @@ refer to [Alerting Rules][alertingrules] for more information.
 
 ### Step 1: Enable Telemetry on Nomad Servers and Clients
 
-Add the stanza below in your Nomad client and server configuration
+Add the block below in your Nomad client and server configuration
 files. If you have used the provided repo in this guide to set up a Nomad
 cluster, the configuration file will be `/etc/nomad.d/nomad.hcl`.
 After making this change, restart the Nomad service on each server and
@@ -215,7 +215,7 @@ EOH
   }
 }
 ```
-Notice we are using the [template][template] stanza to create a Prometheus
+Notice we are using the [template][template] block to create a Prometheus
 configuration using [environment][env] variables. In this case, we are using the
 environment variable `NOMAD_IP_prometheus_ui` in the
 [consul_sd_configs][consul_sd_config]
@@ -457,7 +457,7 @@ EOH
 ```
 Notice we have added a few important sections to this job file:
 
-  - We added another template stanza that defines an [alerting rule][alertingrules]
+  - We added another template block that defines an [alerting rule][alertingrules]
     for our web server. Namely, Prometheus will send out an alert if it detects
     the `webserver` service has disappeared.
 
@@ -559,7 +559,7 @@ to send out notifications to a [receiver][receivers] of your choice.
 [prometheus-targets]: /assets/images/prometheus-targets.png
 [running-jobs]: /assets/images/running-jobs.png
 [telemetry]: /docs/configuration/telemetry.html
-[telemetry stanza]: /docs/configuration/telemetry.html
+[telemetry block]: /docs/configuration/telemetry.html
 [template]: /docs/job-specification/template.html
 [volumes]: /docs/drivers/docker.html#volumes
 [prometheus]: https://prometheus.io/docs/introduction/overview/

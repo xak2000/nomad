@@ -6,7 +6,7 @@ Nvidia device plugin uses NVML bindings to get data regarding available nvidia d
 
 # Config
 
-The configuration should be passed via an HCL file that begins with a top level `config` stanza:
+The configuration should be passed via an HCL file that begins with a top level `config` block:
 
 ```
 config {
