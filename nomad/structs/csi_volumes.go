@@ -5,7 +5,11 @@ const (
 )
 
 type CSIVolume struct {
-	ID string
+	ID           string
+	Claim        int
+	MaxClients   int
+	ModeReadMany bool
+	ModeWriteOne bool
 }
 
 type CSIVolumeRegisterRequest struct {
@@ -16,6 +20,20 @@ type CSIVolumeRegisterRequest struct {
 type CSIVolumeDeregisterRequest struct {
 	VolumeIDs []string
 	WriteRequest
+}
+
+func (v *CSIVolume) CanMountReadOnly() bool {
+	if v.Claim < v.MaxClients {
+		return true
+	}
+	return false
+}
+
+func (v *CSIVolume) CanMountWritable() bool {
+	if v.Claim < 1 && v.ModeWriteOne {
+		return true
+	}
+	return false
 }
 
 // ClientCSIVolumeConfig is used to configure access to host paths on a Nomad Client
