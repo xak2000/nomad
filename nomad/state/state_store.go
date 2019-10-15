@@ -1506,6 +1506,43 @@ func (s *StateStore) JobSummaryByPrefix(ws memdb.WatchSet, namespace, id string)
 	return iter, nil
 }
 
+func (s *StateStore) CSIVolumeRegister(index uint64, volumes []*structs.CSIVolume) error {
+	txn := s.db.Txn(true)
+	defer txn.Abort()
+
+	for _, v := range volumes {
+		err := txn.Insert("csi_volumes", v)
+		if err != nil {
+			return fmt.Errorf("volume insert: %v", err)
+		}
+	}
+
+	txn.Commit()
+	return nil
+}
+
+func (s *StateStore) CSIVolumeDeregister(index uint64, ids []string) error {
+	txn := s.db.Txn(true)
+	defer txn.Abort()
+
+	for _, id := range ids {
+		existing, err := txn.First("csi_volumes", "id", id)
+		if err != nil {
+			return fmt.Errorf("volume lookup failed: %s: %v", id, err)
+		}
+		if existing == nil {
+			return fmt.Errorf("volume not found: %s", id)
+		}
+
+		if err = txn.Delete("csi_volumes", existing); err != nil {
+			return fmt.Errorf("volume delete failed: %s: %v", id, err)
+		}
+	}
+
+	txn.Commit()
+	return nil
+}
+
 // UpsertPeriodicLaunch is used to register a launch or update it.
 func (s *StateStore) UpsertPeriodicLaunch(index uint64, launch *structs.PeriodicLaunch) error {
 	txn := s.db.Txn(true)
