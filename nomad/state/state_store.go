@@ -1521,6 +1521,37 @@ func (s *StateStore) CSIVolumeRegister(index uint64, volumes []*structs.CSIVolum
 	return nil
 }
 
+// csiVolumeChangeClaim changes the claimed count
+func (s *StateStore) csiVolumeChangeClaim(index uint64, id string, change int) error {
+	txn := s.db.Txn(true)
+	defer txn.Abort()
+
+	volume, err := txn.First("csi_volumes", "id", id)
+	if err != nil {
+		return fmt.Errorf("volume lookup failed: %s: %v", id, err)
+	}
+	if volume == nil {
+		return fmt.Errorf("volume not found: %s", id)
+	}
+
+	volume.Claim = volume.Claim + change
+
+	if err = txn.Insert("csi_volumes", volume); err != nil {
+		return fmt.Errorf("volume delete failed: %s: %v", id, err)
+	}
+
+	txn.Commit()
+	return nil
+}
+
+func (s *StateStore) CSIVolumeClaim(index uint64, id string) error {
+	return csiVolumeChangeClaim(index, id, 1)
+}
+
+func (s *StateStore) CSIVolumeRelease(index uint64, id string) error {
+	return csiVolumeChangeClaim(index, id, -1)
+}
+
 func (s *StateStore) CSIVolumeDeregister(index uint64, ids []string) error {
 	txn := s.db.Txn(true)
 	defer txn.Abort()
