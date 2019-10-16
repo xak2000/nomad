@@ -5,21 +5,13 @@ const (
 )
 
 type CSIVolume struct {
-	ID           string
-	Claim        int
-	MaxClients   int
-	ModeReadMany bool
-	ModeWriteOne bool
-}
-
-type CSIVolumeRegisterRequest struct {
-	Volumes []*CSIVolume
-	WriteRequest
-}
-
-type CSIVolumeDeregisterRequest struct {
-	VolumeIDs []string
-	WriteRequest
+	ID            string
+	Claim         int
+	MaxClients    int
+	ModeReadMany  bool
+	ModeWriteOne  bool
+	CreatedIndex  uint64
+	ModifiedIndex uint64
 }
 
 func (v *CSIVolume) CanMountReadOnly() bool {
@@ -34,6 +26,37 @@ func (v *CSIVolume) CanMountWritable() bool {
 		return true
 	}
 	return false
+}
+
+// ========================================
+// Request envelopes
+
+type CSIVolumeRegisterRequest struct {
+	Volumes []*CSIVolume
+	WriteRequest
+}
+
+type CSIVolumeDeregisterRequest struct {
+	VolumeIDs []string
+	WriteRequest
+}
+
+type CSIVolumeListRequest struct {
+	QueryMeta
+}
+
+type CSIVolumeListResponse struct {
+	Volumes []*CSIVolume
+	QueryMeta
+}
+
+type CSIVolumeSingleRequest struct {
+	ID string
+}
+
+type CSIVolumeSingleResponse struct {
+	Volume *CSIVolume
+	QueryMeta
 }
 
 // ClientCSIVolumeConfig is used to configure access to host paths on a Nomad Client
