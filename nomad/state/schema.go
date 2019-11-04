@@ -45,7 +45,7 @@ func init() {
 		aclTokenTableSchema,
 		autopilotConfigTableSchema,
 		schedulerConfigTableSchema,
-		csiVolumeTableSchema
+		csiVolumeTableSchema,
 	}...)
 }
 
