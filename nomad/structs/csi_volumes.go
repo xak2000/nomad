@@ -6,6 +6,8 @@ const (
 
 type CSIVolume struct {
 	ID            string
+	Driver        string
+	Namespace     string
 	Claim         int
 	MaxClients    int
 	ModeReadMany  bool
@@ -42,7 +44,7 @@ type CSIVolumeDeregisterRequest struct {
 }
 
 type CSIVolumeListRequest struct {
-	QueryMeta
+	QueryOptions
 }
 
 type CSIVolumeListResponse struct {
@@ -52,6 +54,7 @@ type CSIVolumeListResponse struct {
 
 type CSIVolumeSingleRequest struct {
 	ID string
+	QueryOptions
 }
 
 type CSIVolumeSingleResponse struct {
