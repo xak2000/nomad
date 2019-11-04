@@ -1,15 +1,20 @@
 package nomad
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
+	metrics "github.com/armon/go-metrics"
 	log "github.com/hashicorp/go-hclog"
+	memdb "github.com/hashicorp/go-memdb"
 	multierror "github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/nomad/acl"
+	"github.com/hashicorp/nomad/nomad/state"
 	"github.com/hashicorp/nomad/nomad/structs"
 )
 
+// CSIVolume wraps the structs.CSIVolume with request data and server context
 type CSIVolume struct {
 	srv    *Server
 	logger log.Logger
@@ -17,11 +22,7 @@ type CSIVolume struct {
 	// ctx provides context regarding the underlying connection
 	ctx *RPCContext
 
-	// updates holds pending client status updates for allocations
-	updates []*structs.Allocation
-
-	// evals holds pending rescheduling eval updates triggered by failed allocations
-	evals []*structs.Evaluation
+	volume *structs.CSIVolume
 
 	// updateFuture is used to wait for the pending batch update
 	// to complete. This may be nil if no batch is pending.
@@ -41,29 +42,23 @@ type CSIVolume struct {
 func (srv *Server) endpoint(args *structs.QueryOptions, reply structs.QueryMeta,
 	forward string,
 	aclCheck func(*acl.ACL) bool,
-	metrics []string) (func(), error) {
-
-	var aclObj *acl.ACL
-	var err error
-
-	// The empty function, returned if metrics are unused
-	// nilFn := func() {}
-
+	metricsNames []string,
+) (stop bool, delayThunk func(), _ error) {
 	// Forward to the leader
 	if done, err := srv.forward(forward, args, args, reply); done {
-		return nil, err
+		return true, nil, err
 	}
 
 	// Enforce ACL Token
 	// Lookup the token
-	if aclObj, err = srv.ResolveToken(args.AuthToken); err != nil {
-		// If ResolveToken had an unexpected error return that
-		return nil, err
+	aclObj, err := srv.ResolveToken(args.AuthToken)
+	if err != nil {
+		// If ResolveToken had an unexpected error return that		return nil, err
 	}
 
 	// Check the found token with the provided predicate
 	if aclObj != nil && !aclCheck(aclObj) {
-		return nil, structs.ErrPermissionDenied
+		return true, nil, structs.ErrPermissionDenied
 	}
 
 	// Fallback to treating the AuthToken as a Node.SecretID
@@ -73,53 +68,105 @@ func (srv *Server) endpoint(args *structs.QueryOptions, reply structs.QueryMeta,
 			// Return the original ResolveToken error with this err
 			var merr multierror.Error
 			merr.Errors = append(merr.Errors, err, stateErr)
-			return nil, merr.ErrorOrNil()
+			return false, nil, merr.ErrorOrNil()
 		}
 
 		if node == nil {
-			return nil, structs.ErrTokenNotFound
+			return true, nil, structs.ErrTokenNotFound
 		}
 	}
 
 	// Start metrics
-	if len(metrics) > 0 {
+	if len(metricsNames) > 0 {
 		start := time.Now()
-		return func() {
-			metrics.MeasureSince(metrics, start)
-		}, nil
+		return false,
+			func() {
+				metrics.MeasureSince(metricsNames, start)
+			},
+			nil
 	}
 
-	return nil, nil
+	return false, nil, nil
 }
 
+// List replies with CSIVolumes, filtered by ACL access
 func (v *CSIVolume) List(args *structs.CSIVolumeListRequest, reply structs.CSIVolumeListResponse) error {
-	end, err := endpoint(args, reply, "CSIVolume.List",
-		func(aclObj *acl.ACL) bool {
-			return aclObj.AllowCSIVolumeRead()
-		},
-		[]string{"nomad", "volume", "list"})
-	if err != nil {
-		return err
-	}
-	if end != nil {
-		defer end()
+	aclOk := func(namespace string, aclObj *acl.ACL) bool {
+		return aclObj.AllowNsOp(namespace, acl.NamespaceCapabilityCSIAccess)
 	}
 
-	return nil
+	stop, deferFn, err := v.srv.endpoint(&args.QueryOptions, reply.QueryMeta, "CSIVolume.List",
+		func(a *acl.ACL) bool { return aclOk(v.volume.Namespace, a) },
+		[]string{"nomad", "volume", "list"})
+	if stop || err != nil {
+		return err
+	}
+	if deferFn != nil {
+		defer deferFn()
+	}
+
+	aclObj, err := v.srv.ResolveToken(args.AuthToken)
+	if err != nil {
+		return fmt.Errorf("acl resolve token: %v", err)
+	}
+
+	// Setup the blocking query to get the list
+	opts := blockingOptions{
+		queryOpts: &args.QueryOptions,
+		queryMeta: &reply.QueryMeta,
+		run: func(ws memdb.WatchSet, state *state.StateStore) error {
+			// Capture all the nodes
+			var err error
+			var iter memdb.ResultIterator
+			if prefix := args.QueryOptions.Prefix; prefix != "" {
+				iter, err = state.CSIVolumesByDriver(ws, prefix)
+			} else {
+				iter, err = state.CSIVolumes(ws)
+			}
+			if err != nil {
+				return err
+			}
+
+			var vs []*structs.CSIVolume
+			for {
+				raw := iter.Next()
+				if raw == nil {
+					break
+				}
+				vol := raw.(*structs.CSIVolume)
+				// Filter by ACL access
+				if aclOk(vol.Namespace, aclObj) {
+					vs = append(vs, vol)
+				}
+			}
+			reply.Volumes = vs
+
+			// Use the last index that affected the jobs table
+			index, err := state.Index("csi_volumes")
+			if err != nil {
+				return err
+			}
+			reply.Index = index
+
+			// Set the query response
+			v.srv.setQueryMeta(&reply.QueryMeta)
+			return nil
+		}}
+	return v.srv.blockingRPC(&opts)
 }
 
 // GetVolume fetches detailed information about a specific volume
 func (v *CSIVolume) GetVolume(args *structs.CSIVolumeSingleRequest, reply structs.CSIVolumeSingleResponse) error {
-	end, err := endpoint(args, reply, "CSIVolume.GetVolume",
+	stop, deferFn, err := v.srv.endpoint(&args.QueryOptions, reply.QueryMeta, "CSIVolume.GetVolume",
 		func(aclObj *acl.ACL) bool {
-			return aclObj.AllowNsOp(ns, acl.HostVolumeCapabilityMountReadOnly)
+			return aclObj.AllowNsOp(v.volume.Namespace, acl.HostVolumeCapabilityMountReadOnly)
 		},
 		[]string{"nomad", "volume", "get"})
-	if err != nil {
+	if stop || err != nil {
 		return err
 	}
-	if end != nil {
-		defer end()
+	if deferFn != nil {
+		defer deferFn()
 	}
 
 	return nil
