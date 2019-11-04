@@ -1506,6 +1506,7 @@ func (s *StateStore) JobSummaryByPrefix(ws memdb.WatchSet, namespace, id string)
 	return iter, nil
 }
 
+// CSIVolumeRegister adds a volume to the server store
 func (s *StateStore) CSIVolumeRegister(index uint64, volumes []*structs.CSIVolume) error {
 	txn := s.db.Txn(true)
 	defer txn.Abort()
@@ -1521,37 +1522,71 @@ func (s *StateStore) CSIVolumeRegister(index uint64, volumes []*structs.CSIVolum
 	return nil
 }
 
-// csiVolumeChangeClaim changes the claimed count
+// CSIVolumesByDriver is used to lookup volumes by driver
+func (s *StateStore) CSIVolumesByDriver(ws memdb.WatchSet, driver string) (memdb.ResultIterator, error) {
+	txn := s.db.Txn(false)
+
+	iter, err := txn.Get("csi_volume", "driver", driver)
+	if err != nil {
+		return nil, fmt.Errorf("volume lookup failed: %v", err)
+	}
+	ws.Add(iter.WatchCh())
+
+	return iter, nil
+}
+
+// CSIVolumes looks up the entire csi_volumes table
+func (s *StateStore) CSIVolumes(ws memdb.WatchSet) (memdb.ResultIterator, error) {
+	txn := s.db.Txn(false)
+
+	iter, err := txn.Get("csi_volume", "id")
+	if err != nil {
+		return nil, fmt.Errorf("volume lookup failed: %v", err)
+	}
+	ws.Add(iter.WatchCh())
+
+	return iter, nil
+}
+
+// csiVolumeChangeClaim updates the volume's number of claims
 func (s *StateStore) csiVolumeChangeClaim(index uint64, id string, change int) error {
 	txn := s.db.Txn(true)
 	defer txn.Abort()
 
-	volume, err := txn.First("csi_volumes", "id", id)
+	row, err := txn.First("csi_volumes", "id", id)
 	if err != nil {
 		return fmt.Errorf("volume lookup failed: %s: %v", id, err)
 	}
-	if volume == nil {
+	if row == nil {
 		return fmt.Errorf("volume not found: %s", id)
+	}
+
+	volume, ok := row.(*structs.CSIVolume)
+	if !ok {
+		return fmt.Errorf("volume row conversion error")
 	}
 
 	volume.Claim = volume.Claim + change
 
 	if err = txn.Insert("csi_volumes", volume); err != nil {
-		return fmt.Errorf("volume delete failed: %s: %v", id, err)
+		return fmt.Errorf("volume update failed: %s: %v", id, err)
 	}
 
 	txn.Commit()
 	return nil
 }
 
+// CSIVolumeClaim increments the claimed volume count
 func (s *StateStore) CSIVolumeClaim(index uint64, id string) error {
-	return csiVolumeChangeClaim(index, id, 1)
+	return s.csiVolumeChangeClaim(index, id, 1)
 }
 
+// CSIVolumeRelease decrements the claimed volume count
 func (s *StateStore) CSIVolumeRelease(index uint64, id string) error {
-	return csiVolumeChangeClaim(index, id, -1)
+	return s.csiVolumeChangeClaim(index, id, -1)
 }
 
+// CSIVolumeDeregister removes the volume from the server
 func (s *StateStore) CSIVolumeDeregister(index uint64, ids []string) error {
 	txn := s.db.Txn(true)
 	defer txn.Abort()
