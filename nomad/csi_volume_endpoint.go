@@ -127,21 +127,31 @@ func (v *CSIVolume) List(args *structs.CSIVolumeListRequest, reply structs.CSIVo
 				return err
 			}
 
+			// Collect results, filter by ACL access
 			var vs []*structs.CSIVolume
+			cache := map[string]bool{}
+
 			for {
 				raw := iter.Next()
 				if raw == nil {
 					break
 				}
 				vol := raw.(*structs.CSIVolume)
-				// Filter by ACL access
-				if aclOk(vol.Namespace, aclObj) {
+
+				// Cache acl checks, they're expensive
+				allowed, ok := cache[vol.Namespace]
+				if !ok {
+					allowed = aclOk(vol.Namespace, aclObj)
+					cache[vol.Namespace] = allowed
+				}
+
+				if allowed {
 					vs = append(vs, vol)
 				}
 			}
 			reply.Volumes = vs
 
-			// Use the last index that affected the jobs table
+			// Use the last index that affected the table
 			index, err := state.Index("csi_volumes")
 			if err != nil {
 				return err
