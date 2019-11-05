@@ -2,11 +2,9 @@ package nomad
 
 import (
 	"fmt"
-	"sync"
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	log "github.com/hashicorp/go-hclog"
 	memdb "github.com/hashicorp/go-memdb"
 	multierror "github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/nomad/acl"
@@ -16,25 +14,25 @@ import (
 
 // CSIVolume wraps the structs.CSIVolume with request data and server context
 type CSIVolume struct {
-	srv    *Server
-	logger log.Logger
+	srv *Server
+	// logger log.Logger
 
 	// ctx provides context regarding the underlying connection
-	ctx *RPCContext
+	// ctx *RPCContext
 
 	volume *structs.CSIVolume
 
 	// updateFuture is used to wait for the pending batch update
 	// to complete. This may be nil if no batch is pending.
-	updateFuture *structs.BatchFuture
+	// updateFuture *structs.BatchFuture
 
 	// updateTimer is the timer that will trigger the next batch
 	// update, and may be nil if there is no batch pending.
-	updateTimer *time.Timer
+	// updateTimer *time.Timer
 
 	// updatesLock synchronizes access to the updates list,
 	// the future and the timer.
-	updatesLock sync.Mutex
+	// updatesLock sync.Mutex
 }
 
 // endpoint forwards the request to the leader, validates ACLs, and starts metrics. If it
