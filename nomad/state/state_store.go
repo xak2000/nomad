@@ -1526,7 +1526,7 @@ func (s *StateStore) CSIVolumeRegister(index uint64, volumes []*structs.CSIVolum
 func (s *StateStore) CSIVolumesByDriver(ws memdb.WatchSet, driver string) (memdb.ResultIterator, error) {
 	txn := s.db.Txn(false)
 
-	iter, err := txn.Get("csi_volume", "driver", driver)
+	iter, err := txn.Get("csi_volumes", "driver", driver)
 	if err != nil {
 		return nil, fmt.Errorf("volume lookup failed: %v", err)
 	}
@@ -1539,7 +1539,7 @@ func (s *StateStore) CSIVolumesByDriver(ws memdb.WatchSet, driver string) (memdb
 func (s *StateStore) CSIVolumes(ws memdb.WatchSet) (memdb.ResultIterator, error) {
 	txn := s.db.Txn(false)
 
-	iter, err := txn.Get("csi_volume", "id")
+	iter, err := txn.Get("csi_volumes", "id")
 	if err != nil {
 		return nil, fmt.Errorf("volume lookup failed: %v", err)
 	}
@@ -1566,6 +1566,10 @@ func (s *StateStore) CSIVolumeClaim(index uint64, id string, claim bool) error {
 		return fmt.Errorf("volume row conversion error")
 	}
 
+	change := -1
+	if claim {
+		change = 1
+	}
 	volume.Claim = volume.Claim + change
 
 	if err = txn.Insert("csi_volumes", volume); err != nil {
