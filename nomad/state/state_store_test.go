@@ -2730,6 +2730,69 @@ func TestStateStore_RestoreJobSummary(t *testing.T) {
 	}
 }
 
+// TestStateStore_CSIVolume checks register, list and deregister for csi_volumes
+func TestStateStore_CSIVolume(t *testing.T) {
+	state := testStateStore(t)
+	err := state.CSIVolumeRegister(
+		0,
+		[]*structs.CSIVolume{{
+			ID:           "DEADBEEF-70AD-4672-9178-802BCA500C87",
+			MaxClients:   2,
+			Driver:       "minnie",
+			ModeWriteOne: false,
+			ModeReadMany: true,
+		}, {
+			ID:           "BAADF00D-70AD-4672-9178-802BCA500C87",
+			MaxClients:   2,
+			Driver:       "adam",
+			ModeWriteOne: false,
+			ModeReadMany: true,
+		}})
+	require.NoError(t, err)
+
+	ws := memdb.NewWatchSet()
+	iter, err := state.CSIVolumes(ws)
+	require.NoError(t, err)
+
+	slurp := func(iter memdb.ResultIterator) (vs []*structs.CSIVolume) {
+		for {
+			raw := iter.Next()
+			if raw == nil {
+				break
+			}
+			vol := raw.(*structs.CSIVolume)
+			vs = append(vs, vol)
+		}
+		return vs
+	}
+
+	vs := slurp(iter)
+	require.Equal(t, 2, len(vs))
+
+	ws = memdb.NewWatchSet()
+	iter, err = state.CSIVolumesByDriver(ws, "minnie")
+	require.NoError(t, err)
+	vs = slurp(iter)
+	require.Equal(t, 1, len(vs))
+
+	err = state.CSIVolumeDeregister(1, []string{
+		"BAADF00D-70AD-4672-9178-802BCA500C87",
+	})
+	require.NoError(t, err)
+
+	ws = memdb.NewWatchSet()
+	iter, err = state.CSIVolumesByDriver(ws, "adam")
+	require.NoError(t, err)
+	vs = slurp(iter)
+	require.Equal(t, 0, len(vs))
+
+	ws = memdb.NewWatchSet()
+	iter, err = state.CSIVolumes(ws)
+	require.NoError(t, err)
+	vs = slurp(iter)
+	require.Equal(t, 1, len(vs))
+}
+
 func TestStateStore_Indexes(t *testing.T) {
 	state := testStateStore(t)
 	node := mock.Node()
