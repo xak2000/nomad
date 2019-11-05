@@ -1549,7 +1549,7 @@ func (s *StateStore) CSIVolumes(ws memdb.WatchSet) (memdb.ResultIterator, error)
 }
 
 // csiVolumeChangeClaim updates the volume's number of claims
-func (s *StateStore) csiVolumeChangeClaim(index uint64, id string, change int) error {
+func (s *StateStore) CSIVolumeClaim(index uint64, id string, claim bool) error {
 	txn := s.db.Txn(true)
 	defer txn.Abort()
 
@@ -1574,16 +1574,6 @@ func (s *StateStore) csiVolumeChangeClaim(index uint64, id string, change int) e
 
 	txn.Commit()
 	return nil
-}
-
-// CSIVolumeClaim increments the claimed volume count
-func (s *StateStore) CSIVolumeClaim(index uint64, id string) error {
-	return s.csiVolumeChangeClaim(index, id, 1)
-}
-
-// CSIVolumeRelease decrements the claimed volume count
-func (s *StateStore) CSIVolumeRelease(index uint64, id string) error {
-	return s.csiVolumeChangeClaim(index, id, -1)
 }
 
 // CSIVolumeDeregister removes the volume from the server
