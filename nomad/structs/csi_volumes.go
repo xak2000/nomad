@@ -9,7 +9,7 @@ type CSIVolume struct {
 	Driver        string
 	Namespace     string
 	Claim         int
-	MaxClients    int
+	MaxClaim      int
 	ModeReadMany  bool
 	ModeWriteOne  bool
 	CreatedIndex  uint64
@@ -17,7 +17,7 @@ type CSIVolume struct {
 }
 
 func (v *CSIVolume) CanMountReadOnly() bool {
-	if v.Claim < v.MaxClients {
+	if v.Claim < v.MaxClaim {
 		return true
 	}
 	return false
