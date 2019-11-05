@@ -43,6 +43,12 @@ type CSIVolumeDeregisterRequest struct {
 	WriteRequest
 }
 
+type CSIVolumeClaimRequest struct {
+	VolumeIDs []string
+	Claim     bool
+	WriteRequest
+}
+
 type CSIVolumeListRequest struct {
 	QueryOptions
 }
