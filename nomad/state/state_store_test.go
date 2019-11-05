@@ -2737,13 +2737,13 @@ func TestStateStore_CSIVolume(t *testing.T) {
 		0,
 		[]*structs.CSIVolume{{
 			ID:           "DEADBEEF-70AD-4672-9178-802BCA500C87",
-			MaxClients:   2,
+			MaxClaim:     2,
 			Driver:       "minnie",
 			ModeWriteOne: false,
 			ModeReadMany: true,
 		}, {
 			ID:           "BAADF00D-70AD-4672-9178-802BCA500C87",
-			MaxClients:   2,
+			MaxClaim:     2,
 			Driver:       "adam",
 			ModeWriteOne: false,
 			ModeReadMany: true,
@@ -2791,6 +2791,26 @@ func TestStateStore_CSIVolume(t *testing.T) {
 	require.NoError(t, err)
 	vs = slurp(iter)
 	require.Equal(t, 1, len(vs))
+
+	// Claims
+	err = state.CSIVolumeClaim(2, []string{"DEADBEEF-70AD-4672-9178-802BCA500C87"}, true)
+	require.NoError(t, err)
+	err = state.CSIVolumeClaim(2, []string{"DEADBEEF-70AD-4672-9178-802BCA500C87"}, true)
+	require.NoError(t, err)
+
+	ws = memdb.NewWatchSet()
+	iter, err = state.CSIVolumesByDriver(ws, "minnie")
+	require.NoError(t, err)
+	vs = slurp(iter)
+	require.Equal(t, 2, vs[0].Claim)
+
+	err = state.CSIVolumeClaim(2, []string{"DEADBEEF-70AD-4672-9178-802BCA500C87"}, false)
+	require.NoError(t, err)
+	ws = memdb.NewWatchSet()
+	iter, err = state.CSIVolumesByDriver(ws, "minnie")
+	require.NoError(t, err)
+	vs = slurp(iter)
+	require.Equal(t, 1, vs[0].Claim)
 }
 
 func TestStateStore_Indexes(t *testing.T) {
