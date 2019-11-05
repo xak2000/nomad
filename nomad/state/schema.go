@@ -636,6 +636,14 @@ func csiVolumeTableSchema() *memdb.TableSchema {
 					Field: "ID",
 				},
 			},
+			"driver": {
+				Name:         "driver",
+				AllowMissing: false,
+				Unique:       false,
+				Indexer: &memdb.StringFieldIndex{
+					Field: "Driver",
+				},
+			},
 		},
 	}
 }
