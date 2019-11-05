@@ -256,6 +256,8 @@ func (n *nomadFSM) Apply(log *raft.Log) interface{} {
 		return n.applyCSIVolumeRegister(buf[1:], log.Index)
 	case structs.CSIVolumeDeregisterRequestType:
 		return n.applyCSIVolumeDeregister(buf[1:], log.Index)
+	case structs.CSIVolumeClaimRequestType:
+		return n.applyCSIVolumeClaim(buf[1:], log.Index)
 	}
 
 	// Check enterprise only message types.
@@ -1087,6 +1089,20 @@ func (n *nomadFSM) applyCSIVolumeDeregister(buf []byte, index uint64) interface{
 
 	if err := n.state.CSIVolumeDeregister(index, req.VolumeIDs); err != nil {
 		n.logger.Error("CSIVolumeDeregister failed", "error", err)
+		return err
+	}
+
+	return nil
+}
+
+func (n *nomadFSM) applyCSIVolumeClaim(buf []byte, index uint64) interface{} {
+	var req structs.CSIVolumeClaimRequest
+	if err := structs.Decode(buf, &req); err != nil {
+		panic(fmt.Errorf("failed to decode request: %v", err))
+	}
+
+	if err := n.state.CSIVolumeClaim(index, req.VolumeIDs, req.Claim); err != nil {
+		n.logger.Error("CSIVolumeClaim failed", "error", err)
 		return err
 	}
 
