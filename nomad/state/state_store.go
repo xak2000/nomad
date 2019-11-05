@@ -1549,31 +1549,33 @@ func (s *StateStore) CSIVolumes(ws memdb.WatchSet) (memdb.ResultIterator, error)
 }
 
 // csiVolumeChangeClaim updates the volume's number of claims
-func (s *StateStore) CSIVolumeClaim(index uint64, id string, claim bool) error {
+func (s *StateStore) CSIVolumeClaim(index uint64, ids []string, claim bool) error {
 	txn := s.db.Txn(true)
 	defer txn.Abort()
 
-	row, err := txn.First("csi_volumes", "id", id)
-	if err != nil {
-		return fmt.Errorf("volume lookup failed: %s: %v", id, err)
-	}
-	if row == nil {
-		return fmt.Errorf("volume not found: %s", id)
-	}
+	for _, id := range ids {
+		row, err := txn.First("csi_volumes", "id", id)
+		if err != nil {
+			return fmt.Errorf("volume lookup failed: %s: %v", id, err)
+		}
+		if row == nil {
+			return fmt.Errorf("volume not found: %s", id)
+		}
 
-	volume, ok := row.(*structs.CSIVolume)
-	if !ok {
-		return fmt.Errorf("volume row conversion error")
-	}
+		volume, ok := row.(*structs.CSIVolume)
+		if !ok {
+			return fmt.Errorf("volume row conversion error")
+		}
 
-	change := -1
-	if claim {
-		change = 1
-	}
-	volume.Claim = volume.Claim + change
+		change := -1
+		if claim {
+			change = 1
+		}
+		volume.Claim = volume.Claim + change
 
-	if err = txn.Insert("csi_volumes", volume); err != nil {
-		return fmt.Errorf("volume update failed: %s: %v", id, err)
+		if err = txn.Insert("csi_volumes", volume); err != nil {
+			return fmt.Errorf("volume update failed: %s: %v", id, err)
+		}
 	}
 
 	txn.Commit()
