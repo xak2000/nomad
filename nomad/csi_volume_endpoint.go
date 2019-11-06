@@ -37,7 +37,7 @@ type CSIVolume struct {
 
 // endpoint forwards the request to the leader, validates ACLs, and starts metrics. If it
 // returns a non-nil function, that function should be called with delay in the endpoint
-func (srv *Server) endpoint(args *structs.QueryOptions, reply structs.QueryMeta,
+func (srv *Server) endpoint(args *structs.QueryOptions, reply *structs.QueryMeta,
 	forward string,
 	aclCheck func(*acl.ACL) bool,
 	metricsNames []string,
@@ -88,12 +88,12 @@ func (srv *Server) endpoint(args *structs.QueryOptions, reply structs.QueryMeta,
 }
 
 // List replies with CSIVolumes, filtered by ACL access
-func (v *CSIVolume) List(args *structs.CSIVolumeListRequest, reply structs.CSIVolumeListResponse) error {
+func (v *CSIVolume) List(args *structs.CSIVolumeListRequest, reply *structs.CSIVolumeListResponse) error {
 	aclOk := func(namespace string, aclObj *acl.ACL) bool {
 		return aclObj.AllowNsOp(namespace, acl.NamespaceCapabilityCSIAccess)
 	}
 
-	stop, deferFn, err := v.srv.endpoint(&args.QueryOptions, reply.QueryMeta, "CSIVolume.List",
+	stop, deferFn, err := v.srv.endpoint(&args.QueryOptions, &reply.QueryMeta, "CSIVolume.List",
 		func(a *acl.ACL) bool { return aclOk(v.volume.Namespace, a) },
 		[]string{"nomad", "volume", "list"})
 	if stop || err != nil {
@@ -164,10 +164,10 @@ func (v *CSIVolume) List(args *structs.CSIVolumeListRequest, reply structs.CSIVo
 }
 
 // GetVolume fetches detailed information about a specific volume
-func (v *CSIVolume) GetVolume(args *structs.CSIVolumeSingleRequest, reply structs.CSIVolumeSingleResponse) error {
-	stop, deferFn, err := v.srv.endpoint(&args.QueryOptions, reply.QueryMeta, "CSIVolume.GetVolume",
+func (v *CSIVolume) GetVolume(args *structs.CSIVolumeSingleRequest, reply *structs.CSIVolumeSingleResponse) error {
+	stop, deferFn, err := v.srv.endpoint(&args.QueryOptions, &reply.QueryMeta, "CSIVolume.GetVolume",
 		func(aclObj *acl.ACL) bool {
-			return aclObj.AllowNsOp(v.volume.Namespace, acl.HostVolumeCapabilityMountReadOnly)
+			return aclObj.AllowNsOp(v.volume.Namespace, acl.NamespaceCapabilityCSIAccess)
 		},
 		[]string{"nomad", "volume", "get"})
 	if stop || err != nil {
@@ -177,5 +177,27 @@ func (v *CSIVolume) GetVolume(args *structs.CSIVolumeSingleRequest, reply struct
 		defer deferFn()
 	}
 
-	return nil
+	opts := blockingOptions{
+		queryOpts: &args.QueryOptions,
+		queryMeta: &reply.QueryMeta,
+		run: func(ws memdb.WatchSet, state *state.StateStore) error {
+			vol, err := state.CSIVolumeByID(ws, args.ID)
+			if err != nil {
+				return err
+			}
+
+			reply.Volume = vol
+
+			// Use the last index that affected the table
+			index, err := state.Index("csi_volumes")
+			if err != nil {
+				return err
+			}
+			reply.Index = index
+
+			// Set the query response
+			v.srv.setQueryMeta(&reply.QueryMeta)
+			return nil
+		}}
+	return v.srv.blockingRPC(&opts)
 }
