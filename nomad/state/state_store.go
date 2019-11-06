@@ -1522,6 +1522,24 @@ func (s *StateStore) CSIVolumeRegister(index uint64, volumes []*structs.CSIVolum
 	return nil
 }
 
+// CSIVolumeByID is used to lookup a single volume
+func (s *StateStore) CSIVolumeByID(ws memdb.WatchSet, id string) (*structs.CSIVolume, error) {
+	txn := s.db.Txn(false)
+
+	watchCh, obj, err := txn.FirstWatch("csi_volumes", "id", id)
+	if err != nil {
+		return nil, fmt.Errorf("volume lookup failed: %s %v", id, err)
+	}
+	ws.Add(watchCh)
+
+	if obj != nil {
+		v := obj.(*structs.CSIVolume)
+		return v, nil
+	}
+
+	return nil, nil
+}
+
 // CSIVolumesByDriver is used to lookup volumes by driver
 func (s *StateStore) CSIVolumesByDriver(ws memdb.WatchSet, driver string) (memdb.ResultIterator, error) {
 	txn := s.db.Txn(false)
