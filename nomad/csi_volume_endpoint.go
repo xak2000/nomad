@@ -5,6 +5,7 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
+	log "github.com/hashicorp/go-hclog"
 	memdb "github.com/hashicorp/go-memdb"
 	multierror "github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/nomad/acl"
@@ -14,11 +15,11 @@ import (
 
 // CSIVolume wraps the structs.CSIVolume with request data and server context
 type CSIVolume struct {
-	srv *Server
-	// logger log.Logger
+	srv    *Server
+	logger log.Logger
 
 	// ctx provides context regarding the underlying connection
-	// ctx *RPCContext
+	ctx *RPCContext
 
 	volume *structs.CSIVolume
 
@@ -51,7 +52,8 @@ func (srv *Server) endpoint(args *structs.QueryOptions, reply *structs.QueryMeta
 	// Lookup the token
 	aclObj, err := srv.ResolveToken(args.AuthToken)
 	if err != nil {
-		// If ResolveToken had an unexpected error return that		return nil, err
+		// If ResolveToken had an unexpected error return that
+		return nil, err
 	}
 
 	// Check the found token with the provided predicate
@@ -61,7 +63,8 @@ func (srv *Server) endpoint(args *structs.QueryOptions, reply *structs.QueryMeta
 
 	// Fallback to treating the AuthToken as a Node.SecretID
 	if aclObj == nil {
-		node, stateErr := srv.fsm.State().NodeBySecretID(nil, args.AuthToken)
+		ws := memdb.NewWatchSet()
+		node, stateErr := srv.fsm.State().NodeBySecretID(ws, args.AuthToken)
 		if stateErr != nil {
 			// Return the original ResolveToken error with this err
 			var merr multierror.Error
