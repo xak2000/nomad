@@ -17,16 +17,15 @@ func TestCSIVolumeEndpoint_Get(t *testing.T) {
 		c.NumSchedulers = 0 // Prevent automatic dequeue
 	})
 	defer s1.Shutdown()
+	testutil.WaitForLeader(t, s1.RPC)
 
 	state := s1.fsm.State()
-
-	validToken := mock.CreatePolicyAndToken(t, state, 1001, "test-valid",
-		mock.NamespacePolicy(structs.DefaultNamespace, "", []string{acl.NamespaceCapabilityCSIAccess}))
-	// invalidToken := mock.CreatePolicyAndToken(t, state, 1003, "test-invalid",
-	// 	mock.NamespacePolicy(structs.DefaultNamespace, "", []string{acl.NamespaceCapabilityCSIAccess}))
+	state.BootstrapACLTokens(1, 0, mock.ACLManagementToken())
+	s1.config.ACLEnabled = true
+	policy := mock.NamespacePolicy(structs.DefaultNamespace, "", []string{acl.NamespaceCapabilityCSIAccess})
+	validToken := mock.CreatePolicyAndToken(t, state, 1001, "csi-access", policy)
 
 	codec := rpcClient(t, s1)
-	testutil.WaitForLeader(t, s1.RPC)
 
 	// Create the volume
 	vols := []*structs.CSIVolume{{
@@ -44,6 +43,7 @@ func TestCSIVolumeEndpoint_Get(t *testing.T) {
 		ID: "DEADBEEF-70AD-4672-9178-802BCA500C87",
 		QueryOptions: structs.QueryOptions{
 			Region:    "global",
+			Namespace: structs.DefaultNamespace,
 			AuthToken: validToken.SecretID,
 		},
 	}
