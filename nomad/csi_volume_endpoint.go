@@ -53,7 +53,7 @@ func (srv *Server) endpoint(args *structs.QueryOptions, reply *structs.QueryMeta
 	aclObj, err := srv.ResolveToken(args.AuthToken)
 	if err != nil {
 		// If ResolveToken had an unexpected error return that
-		return nil, err
+		return true, nil, err
 	}
 
 	// Check the found token with the provided predicate
