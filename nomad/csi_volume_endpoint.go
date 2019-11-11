@@ -85,8 +85,8 @@ func (v *CSIVolume) List(args *structs.CSIVolumeListRequest, reply *structs.CSIV
 			// Capture all the nodes
 			var err error
 			var iter memdb.ResultIterator
-			if prefix := args.QueryOptions.Prefix; prefix != "" {
-				iter, err = state.CSIVolumesByDriver(ws, prefix)
+			if args.Driver != "" {
+				iter, err = state.CSIVolumesByDriver(ws, args.Driver)
 			} else {
 				iter, err = state.CSIVolumes(ws)
 			}
@@ -105,7 +105,11 @@ func (v *CSIVolume) List(args *structs.CSIVolumeListRequest, reply *structs.CSIV
 				}
 				vol := raw.(*structs.CSIVolume)
 
-				// QUESTION: Cache acl checks, they're expensive
+				if args.Namespace != "" && vol.Namespace != args.Namespace {
+					continue
+				}
+
+				// Cache acl checks, QUESTION: are they expensive
 				allowed, ok := cache[vol.Namespace]
 				if !ok {
 					allowed = aclObj.AllowNsOp(vol.Namespace, acl.NamespaceCapabilityCSIAccess)
