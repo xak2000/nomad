@@ -13,23 +13,26 @@ import (
 
 func TestCSIVolumeEndpoint_Get(t *testing.T) {
 	t.Parallel()
-	s1 := TestServer(t, func(c *Config) {
+	srv := TestServer(t, func(c *Config) {
 		c.NumSchedulers = 0 // Prevent automatic dequeue
 	})
-	defer s1.Shutdown()
-	testutil.WaitForLeader(t, s1.RPC)
+	defer srv.Shutdown()
+	testutil.WaitForLeader(t, srv.RPC)
 
-	state := s1.fsm.State()
+	ns := structs.DefaultNamespace
+
+	state := srv.fsm.State()
 	state.BootstrapACLTokens(1, 0, mock.ACLManagementToken())
-	s1.config.ACLEnabled = true
-	policy := mock.NamespacePolicy(structs.DefaultNamespace, "", []string{acl.NamespaceCapabilityCSIAccess})
+	srv.config.ACLEnabled = true
+	policy := mock.NamespacePolicy(ns, "", []string{acl.NamespaceCapabilityCSIAccess})
 	validToken := mock.CreatePolicyAndToken(t, state, 1001, "csi-access", policy)
 
-	codec := rpcClient(t, s1)
+	codec := rpcClient(t, srv)
 
 	// Create the volume
 	vols := []*structs.CSIVolume{{
 		ID:           "DEADBEEF-70AD-4672-9178-802BCA500C87",
+		Namespace:    ns,
 		MaxClaim:     2,
 		Driver:       "minnie",
 		ModeWriteOne: false,
@@ -43,7 +46,7 @@ func TestCSIVolumeEndpoint_Get(t *testing.T) {
 		ID: "DEADBEEF-70AD-4672-9178-802BCA500C87",
 		QueryOptions: structs.QueryOptions{
 			Region:    "global",
-			Namespace: structs.DefaultNamespace,
+			Namespace: ns,
 			AuthToken: validToken.SecretID,
 		},
 	}
@@ -52,6 +55,115 @@ func TestCSIVolumeEndpoint_Get(t *testing.T) {
 	err = msgpackrpc.CallWithCodec(codec, "CSIVolume.GetVolume", req, &resp)
 	require.NoError(t, err)
 	require.NotEqual(t, 0, resp.Index)
+	require.Equal(t, vols[0].ID, resp.Volume.ID)
+}
 
-	// MLM check props
+func TestCSIVolumeEndpoint_List(t *testing.T) {
+	t.Parallel()
+	srv := TestServer(t, func(c *Config) {
+		c.NumSchedulers = 0 // Prevent automatic dequeue
+	})
+	defer srv.Shutdown()
+	testutil.WaitForLeader(t, srv.RPC)
+
+	ns := structs.DefaultNamespace
+	ms := "altNamespace"
+
+	state := srv.fsm.State()
+	state.BootstrapACLTokens(1, 0, mock.ACLManagementToken())
+	srv.config.ACLEnabled = true
+
+	policy := `
+namespace "default" {
+    capabilities = ["csi-access"]
+}
+namespace "altNamespace" {
+    capabilities = ["csi-access"]
+}`
+
+	policy = `
+namespace "default" {
+    capabilities = ["csi-access"]
+}
+`
+	nsTok := mock.CreatePolicyAndToken(t, state, 1001, "csi-access", policy)
+
+	// iter, err := state.ACLPolicies()
+	// x := iter.Next()
+	// for x != nil {
+	// 	a := raw.(*structs.ACLPolicy)
+	// 	fmt.Printf("ns: %s\n")
+	// }
+
+	codec := rpcClient(t, srv)
+
+	// Create the volume
+	vols := []*structs.CSIVolume{{
+		ID:           "DEADBEEF-70AD-4672-9178-802BCA500C87",
+		Namespace:    ns,
+		MaxClaim:     2,
+		Driver:       "minnie",
+		ModeWriteOne: false,
+		ModeReadMany: true,
+	}, {
+		ID:           "BAADF00D-70AD-4672-9178-802BCA500C87",
+		Namespace:    ns,
+		MaxClaim:     2,
+		Driver:       "adam",
+		ModeWriteOne: true,
+		ModeReadMany: true,
+	}, {
+		ID:           "BEADCEED-70AD-4672-9178-802BCA500C87",
+		Namespace:    ms,
+		MaxClaim:     2,
+		Driver:       "paddy",
+		ModeWriteOne: true,
+		ModeReadMany: true,
+	}}
+	err := state.CSIVolumeRegister(0, vols)
+	require.NoError(t, err)
+
+	var resp structs.CSIVolumeListResponse
+
+	// Query all, ACL only allows ns
+	req := &structs.CSIVolumeListRequest{
+		QueryOptions: structs.QueryOptions{
+			Region:    "global",
+			AuthToken: nsTok.SecretID,
+		},
+	}
+	err = msgpackrpc.CallWithCodec(codec, "CSIVolume.List", req, &resp)
+	require.NoError(t, err)
+	require.NotEqual(t, 0, resp.Index)
+	require.Equal(t, 2, len(resp.Volumes))
+	ids := map[string]bool{vols[0].ID: true, vols[1].ID: true}
+	for _, v := range resp.Volumes {
+		delete(ids, v.ID)
+	}
+	require.Equal(t, 0, len(ids))
+
+	// Query by Driver
+	req = &structs.CSIVolumeListRequest{
+		Driver: "adam",
+		QueryOptions: structs.QueryOptions{
+			Region:    "global",
+			AuthToken: nsTok.SecretID,
+		},
+	}
+	err = msgpackrpc.CallWithCodec(codec, "CSIVolume.List", req, &resp)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(resp.Volumes))
+	require.Equal(t, vols[1].ID, resp.Volumes[0].ID)
+
+	// Query by Driver, ACL filters all results
+	req = &structs.CSIVolumeListRequest{
+		Driver: "paddy",
+		QueryOptions: structs.QueryOptions{
+			Region:    "global",
+			AuthToken: nsTok.SecretID,
+		},
+	}
+	err = msgpackrpc.CallWithCodec(codec, "CSIVolume.List", req, &resp)
+	require.NoError(t, err)
+	require.Equal(t, 0, len(resp.Volumes))
 }
