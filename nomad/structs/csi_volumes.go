@@ -50,6 +50,7 @@ type CSIVolumeClaimRequest struct {
 }
 
 type CSIVolumeListRequest struct {
+	Driver string
 	QueryOptions
 }
 
