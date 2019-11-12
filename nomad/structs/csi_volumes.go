@@ -12,6 +12,7 @@ type CSIVolume struct {
 	MaxClaim      int
 	ModeReadMany  bool
 	ModeWriteOne  bool
+	Topology      map[string]string
 	CreatedIndex  uint64
 	ModifiedIndex uint64
 }
@@ -25,6 +26,40 @@ func (v *CSIVolume) CanMountReadOnly() bool {
 
 func (v *CSIVolume) CanMountWritable() bool {
 	if v.Claim < 1 && v.ModeWriteOne {
+		return true
+	}
+	return false
+}
+
+// Equality by value
+func (v *CSIVolume) Equal(o *CSIVolume) bool {
+	if o == nil {
+		return false
+	}
+
+	if v.ID == o.ID &&
+		v.Driver == o.Driver &&
+		v.Namespace == o.Namespace &&
+		v.Claim == o.Claim &&
+		v.MaxClaim == o.MaxClaim &&
+		v.ModeReadMany == o.ModeReadMany &&
+		v.ModeWriteOne == o.ModeWriteOne {
+
+		if len(v.Topology) != len(o.Topology) {
+			return false
+		}
+
+		for k, x := range v.Topology {
+			if o.Topology[k] != x {
+				return false
+			}
+		}
+
+		for k, x := range o.Topology {
+			if v.Topology[k] != x {
+				return false
+			}
+		}
 		return true
 	}
 	return false
@@ -59,13 +94,22 @@ type CSIVolumeListResponse struct {
 	QueryMeta
 }
 
-type CSIVolumeSingleRequest struct {
+type CSIVolumeGetRequest struct {
 	ID string
 	QueryOptions
 }
 
-type CSIVolumeSingleResponse struct {
+type CSIVolumeGetResponse struct {
 	Volume *CSIVolume
+	QueryMeta
+}
+
+type CSIVolumePutRequest struct {
+	Volumes []*CSIVolume
+	QueryOptions
+}
+
+type CSIVolumePutResponse struct {
 	QueryMeta
 }
 
