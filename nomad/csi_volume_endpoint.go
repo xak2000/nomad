@@ -20,7 +20,7 @@ type CSIVolume struct {
 	// ctx provides context regarding the underlying connection
 	ctx *RPCContext
 
-	// volume *structs.CSIVolume
+	volume *structs.CSIVolume
 
 	// updateFuture is used to wait for the pending batch update
 	// to complete. This may be nil if no batch is pending.
@@ -137,7 +137,7 @@ func (v *CSIVolume) List(args *structs.CSIVolumeListRequest, reply *structs.CSIV
 }
 
 // GetVolume fetches detailed information about a specific volume
-func (v *CSIVolume) GetVolume(args *structs.CSIVolumeSingleRequest, reply *structs.CSIVolumeSingleResponse) error {
+func (v *CSIVolume) GetVolume(args *structs.CSIVolumeGetRequest, reply *structs.CSIVolumeGetResponse) error {
 	if done, err := v.srv.forward("CSIVolume.GetVolume", args, args, reply); done {
 		return err
 	}
@@ -174,6 +174,49 @@ func (v *CSIVolume) GetVolume(args *structs.CSIVolumeSingleRequest, reply *struc
 
 			// Set the query response
 			v.srv.setQueryMeta(&reply.QueryMeta)
+			return nil
+		}}
+	return v.srv.blockingRPC(&opts)
+}
+
+// PutVolume registers a new volume
+func (v *CSIVolume) PutVolume(args *structs.CSIVolumePutRequest, reply *structs.CSIVolumePutResponse) error {
+	if done, err := v.srv.forward("CSIVolume.GetVolume", args, args, reply); done {
+		return err
+	}
+
+	aclObj, err := v.srv.aclObj(&args.QueryOptions)
+	if err != nil {
+		return err
+	}
+
+	metricsStart := time.Now()
+	defer metrics.MeasureSince([]string{"nomad", "volume", "get"}, metricsStart)
+
+	opts := blockingOptions{
+		queryOpts: &args.QueryOptions,
+		queryMeta: &reply.QueryMeta,
+		run: func(ws memdb.WatchSet, state *state.StateStore) error {
+			// vol, err := state.CSIVolumeByID(ws, args.ID)
+			// if err != nil {
+			// 	return err
+			// }
+
+			if !aclObj.AllowNsOp(vol.Namespace, acl.NamespaceCapabilityCSIAccess) {
+			// 	return structs.ErrPermissionDenied
+			// }
+
+			// reply.Volume = vol
+
+			// // Use the last index that affected the table
+			// index, err := state.Index("csi_volumes")
+			// if err != nil {
+			// 	return err
+			// }
+			// reply.Index = index
+
+			// // Set the query response
+			// v.srv.setQueryMeta(&reply.QueryMeta)
 			return nil
 		}}
 	return v.srv.blockingRPC(&opts)
