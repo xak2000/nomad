@@ -35,6 +35,7 @@ const (
 	NamespaceCapabilitySentinelOverride = "sentinel-override"
 	NamespaceCapabilityPrivilegedTask   = "privileged-task"
 	NamespaceCapabilityCSIAccess        = "csi-access"
+	NamespaceCapabilityCSICreateVolume  = "csi-create-volume"
 )
 
 var (
@@ -125,7 +126,7 @@ func isNamespaceCapabilityValid(cap string) bool {
 		NamespaceCapabilitySubmitJob, NamespaceCapabilityDispatchJob, NamespaceCapabilityReadLogs,
 		NamespaceCapabilityReadFS, NamespaceCapabilityAllocLifecycle,
 		NamespaceCapabilityAllocExec, NamespaceCapabilityAllocNodeExec,
-		NamespaceCapabilityCSIAccess:
+		NamespaceCapabilityCSIAccess, NamespaceCapabilityCSICreateVolume:
 		return true
 	// Separate the enterprise-only capabilities
 	case NamespaceCapabilitySentinelOverride:
