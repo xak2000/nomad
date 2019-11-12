@@ -42,7 +42,7 @@ func TestCSIVolumeEndpoint_Get(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create the register request
-	req := &structs.CSIVolumeSingleRequest{
+	req := &structs.CSIVolumeGetRequest{
 		ID: "DEADBEEF-70AD-4672-9178-802BCA500C87",
 		QueryOptions: structs.QueryOptions{
 			Region:    "global",
@@ -51,11 +51,55 @@ func TestCSIVolumeEndpoint_Get(t *testing.T) {
 		},
 	}
 
-	var resp structs.CSIVolumeSingleResponse
+	var resp structs.CSIVolumeGetResponse
 	err = msgpackrpc.CallWithCodec(codec, "CSIVolume.GetVolume", req, &resp)
 	require.NoError(t, err)
 	require.NotEqual(t, 0, resp.Index)
 	require.Equal(t, vols[0].ID, resp.Volume.ID)
+}
+
+func TestCSIVolumeEndpoint_Put(t *testing.T) {
+	t.Parallel()
+	srv := TestServer(t, func(c *Config) {
+		c.NumSchedulers = 0 // Prevent automatic dequeue
+	})
+	defer srv.Shutdown()
+	testutil.WaitForLeader(t, srv.RPC)
+
+	ns := structs.DefaultNamespace
+
+	state := srv.fsm.State()
+	state.BootstrapACLTokens(1, 0, mock.ACLManagementToken())
+	srv.config.ACLEnabled = true
+	policy := mock.NamespacePolicy(ns, "", []string{acl.NamespaceCapabilityCSIAccess})
+	validToken := mock.CreatePolicyAndToken(t, state, 1001, "csi-access", policy)
+
+	codec := rpcClient(t, srv)
+
+	// Create the volume
+	vols := []*structs.CSIVolume{{
+		ID:           "DEADBEEF-70AD-4672-9178-802BCA500C87",
+		Namespace:    ns,
+		MaxClaim:     2,
+		Driver:       "minnie",
+		ModeWriteOne: false,
+		ModeReadMany: true,
+	}}
+
+	// Create the register request
+	req := &structs.CSIVolumePutRequest{
+		Volumes: vols,
+		QueryOptions: structs.QueryOptions{
+			Region:    "global",
+			Namespace: ns,
+			AuthToken: validToken.SecretID,
+		},
+	}
+
+	var resp structs.CSIVolumePutResponse
+	err := msgpackrpc.CallWithCodec(codec, "CSIVolume.PutVolume", req, &resp)
+	require.NoError(t, err)
+	require.NotEqual(t, 0, resp.Index)
 }
 
 func TestCSIVolumeEndpoint_List(t *testing.T) {
