@@ -73,28 +73,8 @@ func TestCSIVolumeEndpoint_List(t *testing.T) {
 	state.BootstrapACLTokens(1, 0, mock.ACLManagementToken())
 	srv.config.ACLEnabled = true
 
-	policy := `
-namespace "default" {
-    capabilities = ["csi-access"]
-}
-namespace "altNamespace" {
-    capabilities = ["csi-access"]
-}`
-
-	policy = `
-namespace "default" {
-    capabilities = ["csi-access"]
-}
-`
+	policy := mock.NamespacePolicy(ns, "", []string{acl.NamespaceCapabilityCSIAccess})
 	nsTok := mock.CreatePolicyAndToken(t, state, 1001, "csi-access", policy)
-
-	// iter, err := state.ACLPolicies()
-	// x := iter.Next()
-	// for x != nil {
-	// 	a := raw.(*structs.ACLPolicy)
-	// 	fmt.Printf("ns: %s\n")
-	// }
-
 	codec := rpcClient(t, srv)
 
 	// Create the volume
