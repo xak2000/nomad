@@ -106,7 +106,7 @@ type CSIVolumeGetResponse struct {
 
 type CSIVolumePutRequest struct {
 	Volumes []*CSIVolume
-	QueryOptions
+	WriteRequest
 }
 
 type CSIVolumePutResponse struct {
