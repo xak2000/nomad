@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/nomad/acl"
 	"github.com/hashicorp/nomad/nomad/state"
 	"github.com/hashicorp/nomad/nomad/structs"
+	"github.com/kr/pretty"
 )
 
 // CSIVolume wraps the structs.CSIVolume with request data and server context
@@ -37,7 +38,7 @@ type CSIVolume struct {
 
 // aclObj looks up the ACL token in the request and returns the acl.ACL object
 // fallback to node secret ids
-func (srv *Server) aclObj(args *structs.QueryOptions) (*acl.ACL, error) {
+func (srv *Server) QueryACLObj(args *structs.QueryOptions) (*acl.ACL, error) {
 	// Lookup the token
 	aclObj, err := srv.ResolveToken(args.AuthToken)
 	if err != nil {
@@ -63,13 +64,35 @@ func (srv *Server) aclObj(args *structs.QueryOptions) (*acl.ACL, error) {
 	return aclObj, nil
 }
 
+func (srv *Server) WriteACLObj(args *structs.WriteRequest) (*acl.ACL, error) {
+	opts := &structs.QueryOptions{
+		Region:    args.RequestRegion(),
+		Namespace: args.RequestNamespace(),
+		AuthToken: args.AuthToken,
+	}
+	return srv.QueryACLObj(opts)
+}
+
+func (srv *Server) replyCSIVolumeIndex(state *state.StateStore, reply *structs.QueryMeta) error {
+	// Use the last index that affected the table
+	index, err := state.Index("csi_volumes")
+	if err != nil {
+		return err
+	}
+	reply.Index = index
+
+	// Set the query response
+	srv.setQueryMeta(reply)
+	return nil
+}
+
 // List replies with CSIVolumes, filtered by ACL access
 func (v *CSIVolume) List(args *structs.CSIVolumeListRequest, reply *structs.CSIVolumeListResponse) error {
 	if done, err := v.srv.forward("CSIVolume.List", args, args, reply); done {
 		return err
 	}
 
-	aclObj, err := v.srv.aclObj(&args.QueryOptions)
+	aclObj, err := v.srv.QueryACLObj(&args.QueryOptions)
 	if err != nil {
 		return err
 	}
@@ -105,7 +128,7 @@ func (v *CSIVolume) List(args *structs.CSIVolumeListRequest, reply *structs.CSIV
 				}
 				vol := raw.(*structs.CSIVolume)
 
-				if args.Namespace != "" && vol.Namespace != args.Namespace {
+				if args.RequestNamespace() != "" && vol.Namespace != args.RequestNamespace() {
 					continue
 				}
 
@@ -121,28 +144,18 @@ func (v *CSIVolume) List(args *structs.CSIVolumeListRequest, reply *structs.CSIV
 				}
 			}
 			reply.Volumes = vs
-
-			// Use the last index that affected the table
-			index, err := state.Index("csi_volumes")
-			if err != nil {
-				return err
-			}
-			reply.Index = index
-
-			// Set the query response
-			v.srv.setQueryMeta(&reply.QueryMeta)
-			return nil
+			return v.srv.replyCSIVolumeIndex(state, &reply.QueryMeta)
 		}}
 	return v.srv.blockingRPC(&opts)
 }
 
 // GetVolume fetches detailed information about a specific volume
-func (v *CSIVolume) GetVolume(args *structs.CSIVolumeGetRequest, reply *structs.CSIVolumeGetResponse) error {
+func (v *CSIVolume) Get(args *structs.CSIVolumeGetRequest, reply *structs.CSIVolumeGetResponse) error {
 	if done, err := v.srv.forward("CSIVolume.GetVolume", args, args, reply); done {
 		return err
 	}
 
-	aclObj, err := v.srv.aclObj(&args.QueryOptions)
+	aclObj, err := v.srv.QueryACLObj(&args.QueryOptions)
 	if err != nil {
 		return err
 	}
@@ -164,28 +177,18 @@ func (v *CSIVolume) GetVolume(args *structs.CSIVolumeGetRequest, reply *structs.
 			}
 
 			reply.Volume = vol
-
-			// Use the last index that affected the table
-			index, err := state.Index("csi_volumes")
-			if err != nil {
-				return err
-			}
-			reply.Index = index
-
-			// Set the query response
-			v.srv.setQueryMeta(&reply.QueryMeta)
-			return nil
+			return v.srv.replyCSIVolumeIndex(state, &reply.QueryMeta)
 		}}
 	return v.srv.blockingRPC(&opts)
 }
 
-// PutVolume registers a new volume
-func (v *CSIVolume) PutVolume(args *structs.CSIVolumePutRequest, reply *structs.CSIVolumePutResponse) error {
-	if done, err := v.srv.forward("CSIVolume.GetVolume", args, args, reply); done {
+// RegisterVolume registers a new volume
+func (v *CSIVolume) Register(args *structs.CSIVolumeRegisterRequest, reply *structs.CSIVolumeRegisterResponse) error {
+	if done, err := v.srv.forward("CSIVolume.RegisterVolume", args, args, reply); done {
 		return err
 	}
 
-	aclObj, err := v.srv.aclObj(&args.QueryOptions)
+	aclObj, err := v.srv.WriteACLObj(&args.WriteRequest)
 	if err != nil {
 		return err
 	}
@@ -193,31 +196,62 @@ func (v *CSIVolume) PutVolume(args *structs.CSIVolumePutRequest, reply *structs.
 	metricsStart := time.Now()
 	defer metrics.MeasureSince([]string{"nomad", "volume", "get"}, metricsStart)
 
-	opts := blockingOptions{
-		queryOpts: &args.QueryOptions,
-		queryMeta: &reply.QueryMeta,
-		run: func(ws memdb.WatchSet, state *state.StateStore) error {
-			// vol, err := state.CSIVolumeByID(ws, args.ID)
-			// if err != nil {
-			// 	return err
-			// }
+	if !aclObj.AllowNsOp(args.RequestNamespace(), acl.NamespaceCapabilityCSICreateVolume) {
+		return structs.ErrPermissionDenied
+	}
 
-			if !aclObj.AllowNsOp(vol.Namespace, acl.NamespaceCapabilityCSIAccess) {
-			// 	return structs.ErrPermissionDenied
-			// }
+	// This is the only namespace we ACL checked, force all the volumes to use it
+	for _, v := range args.Volumes {
+		v.Namespace = args.RequestNamespace()
+		if err = v.Validate(); err != nil {
+			return err
+		}
+	}
 
-			// reply.Volume = vol
+	// Find the starting index
+	state := v.srv.State()
+	index, err := state.LatestIndex()
+	if err != nil {
+		return err
+	}
 
-			// // Use the last index that affected the table
-			// index, err := state.Index("csi_volumes")
-			// if err != nil {
-			// 	return err
-			// }
-			// reply.Index = index
+	// Register the volumes
+	err = state.CSIVolumeRegister(index, args.Volumes)
+	if err != nil {
+		pretty.Log("ERROR", err)
+		return err
+	}
 
-			// // Set the query response
-			// v.srv.setQueryMeta(&reply.QueryMeta)
-			return nil
-		}}
-	return v.srv.blockingRPC(&opts)
+	return v.srv.replyCSIVolumeIndex(state, &reply.QueryMeta)
+}
+
+func (v *CSIVolume) Deregister(args *structs.CSIVolumeDeregisterRequest, reply *structs.CSIVolumeDeregisterResponse) error {
+	if done, err := v.srv.forward("CSIVolume.DeregisterVolume", args, args, reply); done {
+		return err
+	}
+
+	aclObj, err := v.srv.WriteACLObj(&args.WriteRequest)
+	if err != nil {
+		return err
+	}
+
+	metricsStart := time.Now()
+	defer metrics.MeasureSince([]string{"nomad", "volume", "deregister"}, metricsStart)
+
+	if !aclObj.AllowNsOp(args.RequestNamespace(), acl.NamespaceCapabilityCSICreateVolume) {
+		return structs.ErrPermissionDenied
+	}
+
+	state := v.srv.State()
+	index, err := state.LatestIndex()
+	if err != nil {
+		return err
+	}
+
+	err = state.CSIVolumeDeregister(index, args.VolumeIDs)
+	if err != nil {
+		return err
+	}
+
+	return v.srv.replyCSIVolumeIndex(state, &reply.QueryMeta)
 }
