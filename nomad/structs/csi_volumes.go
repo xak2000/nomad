@@ -1,5 +1,10 @@
 package structs
 
+import (
+	"fmt"
+	"strings"
+)
+
 const (
 	VolumeTypeCSI = "csi"
 )
@@ -65,6 +70,35 @@ func (v *CSIVolume) Equal(o *CSIVolume) bool {
 	return false
 }
 
+// Validate validates the volume struct, returning all validation errors at once
+func (v *CSIVolume) Validate() error {
+	errs := []string{}
+
+	if v.ID == "" {
+		errs = append(errs, "missing volume id")
+	}
+	if v.Driver == "" {
+		errs = append(errs, "missing driver")
+	}
+	if v.Namespace == "" {
+		errs = append(errs, "missing namespace")
+	}
+	if v.MaxClaim == 0 {
+		errs = append(errs, "missing max claim count")
+	}
+	if v.ModeReadMany == false && v.ModeWriteOne == false {
+		errs = append(errs, "one mode must be set")
+	}
+	if len(v.Topology) == 0 {
+		errs = append(errs, "missing topology")
+	}
+
+	if len(errs) > 0 {
+		return fmt.Errorf("validation: %s", strings.Join(errs, ", "))
+	}
+	return nil
+}
+
 // ========================================
 // Request envelopes
 
@@ -73,9 +107,17 @@ type CSIVolumeRegisterRequest struct {
 	WriteRequest
 }
 
+type CSIVolumeRegisterResponse struct {
+	QueryMeta
+}
+
 type CSIVolumeDeregisterRequest struct {
 	VolumeIDs []string
 	WriteRequest
+}
+
+type CSIVolumeDeregisterResponse struct {
+	QueryMeta
 }
 
 type CSIVolumeClaimRequest struct {
@@ -101,15 +143,6 @@ type CSIVolumeGetRequest struct {
 
 type CSIVolumeGetResponse struct {
 	Volume *CSIVolume
-	QueryMeta
-}
-
-type CSIVolumePutRequest struct {
-	Volumes []*CSIVolume
-	WriteRequest
-}
-
-type CSIVolumePutResponse struct {
 	QueryMeta
 }
 
