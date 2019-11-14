@@ -6,12 +6,11 @@ import (
 	"fmt"
 	"math/rand"
 	"net"
+	"strings"
 	"sync"
 	"time"
 
 	"golang.org/x/time/rate"
-
-	"strings"
 
 	metrics "github.com/armon/go-metrics"
 	log "github.com/hashicorp/go-hclog"
@@ -200,6 +199,9 @@ func (s *Server) establishLeadership(stopCh chan struct{}) error {
 
 	// Initialize scheduler configuration
 	s.getOrCreateSchedulerConfig()
+
+	// Initialize the ClusterID
+	s.getOrCreateClusterID()
 
 	// Enable the plan queue, since we are now the leader
 	s.planQueue.SetEnabled(true)
@@ -1326,4 +1328,26 @@ func (s *Server) getOrCreateSchedulerConfig() *structs.SchedulerConfiguration {
 	}
 
 	return config
+}
+
+func (s *Server) getOrCreateClusterID() string {
+	fsmState := s.fsm.State()
+	existingMeta, err := fsmState.ClusterMetadata()
+	if err != nil {
+		s.logger.Named("core").Error("failed to get cluster ID", "error", err)
+		return ""
+	}
+
+	if existingMeta == nil || existingMeta.ClusterID == "" {
+		newMeta := structs.ClusterMetadata{ClusterID: uuid.Generate()}
+		if _, _, err = s.raftApply(structs.ClusterMetadataRequestType, newMeta); err != nil {
+			s.logger.Named("core").Error("failed to create cluster ID", "error", err)
+			return ""
+		}
+		s.logger.Info("established cluster id", "cluster_id", newMeta.ClusterID)
+		return newMeta.ClusterID
+	}
+
+	s.logger.Trace("existing cluster id", "cluster_id", existingMeta.ClusterID)
+	return existingMeta.ClusterID
 }

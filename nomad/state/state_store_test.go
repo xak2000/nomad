@@ -7083,7 +7083,6 @@ func TestStateStore_SchedulerConfig(t *testing.T) {
 
 	require := require.New(t)
 	restore, err := state.Restore()
-
 	require.Nil(err)
 
 	err = restore.SchedulerConfigRestore(schedConfig)
@@ -7096,6 +7095,41 @@ func TestStateStore_SchedulerConfig(t *testing.T) {
 	require.Equal(schedConfig.ModifyIndex, modIndex)
 
 	require.Equal(schedConfig, out)
+}
+
+func TestStateStore_ClusterMetadata(t *testing.T) {
+	require := require.New(t)
+
+	state := testStateStore(t)
+	clusterID := "12345678-1234-1234-1234-1234567890"
+	meta := &structs.ClusterMetadata{ClusterID: clusterID}
+
+	err := state.ClusterSetMetadata(100, meta)
+	require.NoError(err)
+
+	result, err := state.ClusterMetadata()
+	require.NoError(err)
+	require.Equal(clusterID, result.ClusterID)
+}
+
+func TestStateStore_ClusterMetadataRestore(t *testing.T) {
+	require := require.New(t)
+
+	state := testStateStore(t)
+	clusterID := "12345678-1234-1234-1234-1234567890"
+	meta := &structs.ClusterMetadata{ClusterID: clusterID}
+
+	restore, err := state.Restore()
+	require.NoError(err)
+
+	err = restore.ClusterMetadataRestore(meta)
+	require.NoError(err)
+
+	restore.Commit()
+
+	out, err := state.ClusterMetadata()
+	require.NoError(err)
+	require.Equal(clusterID, out.ClusterID)
 }
 
 func TestStateStore_Abandon(t *testing.T) {

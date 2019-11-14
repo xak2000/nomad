@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/consul/testutil/retry"
 	memdb "github.com/hashicorp/go-memdb"
+	"github.com/hashicorp/nomad/helper"
 	"github.com/hashicorp/nomad/nomad/mock"
 	"github.com/hashicorp/nomad/nomad/state"
 	"github.com/hashicorp/nomad/nomad/structs"
@@ -627,6 +628,18 @@ func TestLeader_RestoreVaultAccessors(t *testing.T) {
 	if len(tvc.RevokedTokens) != 1 && tvc.RevokedTokens[0].Accessor != va.Accessor {
 		t.Fatalf("Bad revoked accessors: %v", tvc.RevokedTokens)
 	}
+}
+
+func TestLeader_ClusterMetadata(t *testing.T) {
+	s1 := TestServer(t, func(c *Config) {
+		c.NumSchedulers = 0
+	})
+	defer s1.Shutdown()
+	testutil.WaitForLeader(t, s1.RPC)
+
+	meta, err := s1.fsm.State().ClusterMetadata()
+	require.NoError(t, err)
+	require.True(t, helper.IsUUID(meta.ClusterID))
 }
 
 func TestLeader_ReplicateACLPolicies(t *testing.T) {
