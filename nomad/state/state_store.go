@@ -1506,13 +1506,22 @@ func (s *StateStore) JobSummaryByPrefix(ws memdb.WatchSet, namespace, id string)
 	return iter, nil
 }
 
-// CSIVolumeRegister adds a volume to the server store
+// CSIVolumeRegister adds a volume to the server store, iff it's not new
 func (s *StateStore) CSIVolumeRegister(index uint64, volumes []*structs.CSIVolume) error {
 	txn := s.db.Txn(true)
 	defer txn.Abort()
 
 	for _, v := range volumes {
-		err := txn.Insert("csi_volumes", v)
+		// Check for volume existence
+		_, obj, err := txn.FirstWatch("csi_volumes", "id", v.ID)
+		if err != nil {
+			return fmt.Errorf("volume existence check: %v", err)
+		}
+		if obj != nil {
+			return fmt.Errorf("volume exists: %s", v.ID)
+		}
+
+		err = txn.Insert("csi_volumes", v)
 		if err != nil {
 			return fmt.Errorf("volume insert: %v", err)
 		}
