@@ -4736,6 +4736,8 @@ type TaskGroup struct {
 
 	// Volumes is a map of volumes that have been requested by the task group.
 	Volumes map[string]*VolumeRequest
+
+	ShutdownDelay time.Duration
 }
 
 func (tg *TaskGroup) Copy() *TaskGroup {
