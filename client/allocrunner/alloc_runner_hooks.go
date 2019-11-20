@@ -309,7 +309,7 @@ func (ar *allocRunner) preKillHooks() {
 			ar.logger.Trace("running alloc pre shutdown hook", "name", name, "start", start)
 		}
 
-		pre.RunnerPreKillHook()
+		pre.PreKill()
 
 		if ar.logger.IsTrace() {
 			end := time.Now()

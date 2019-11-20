@@ -127,13 +127,9 @@ func (h *groupServiceHook) Update(req *interfaces.RunnerUpdateRequest) error {
 	return h.consulClient.UpdateWorkload(oldWorkloadServices, newWorkloadServices)
 }
 
-func (h *groupServiceHook) RunnerPreKillHook() {
+func (h *groupServiceHook) PreKill() {
 	h.mu.Lock()
 	defer h.mu.Unlock()
-
-	if h.delay == 0 {
-		return
-	}
 
 	// If we have a shutdown delay deregister
 	// group services and then wait
