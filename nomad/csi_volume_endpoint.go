@@ -16,7 +16,7 @@ import (
 type CSIVolume struct {
 	srv    *Server
 	logger log.Logger
-	ctx    *RPCContext
+	// ctx    *RPCContext
 }
 
 // QueryACLObj looks up the ACL token in the request and returns the acl.ACL object
