@@ -3547,6 +3547,10 @@ func (j *Job) Validate() error {
 			taskGroups[tg.Name] = idx
 		}
 
+		// if tg.ShutdownDelay < 0 {
+		// 	mErr.Errors = append(mErr.Errors, errors.New("ShutdownDelay must be a positive value"))
+		// }
+
 		if j.Type == "system" && tg.Count > 1 {
 			mErr.Errors = append(mErr.Errors,
 				fmt.Errorf("Job task group %s has count %d. Count cannot exceed 1 with system scheduler",
