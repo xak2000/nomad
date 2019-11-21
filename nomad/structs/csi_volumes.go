@@ -18,6 +18,7 @@ type CSIVolume struct {
 	ModeReadMany  bool
 	ModeWriteOne  bool
 	Topology      map[string]string
+	Healthy       bool
 	CreatedIndex  uint64
 	ModifiedIndex uint64
 }
